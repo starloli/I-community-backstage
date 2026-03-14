@@ -21,7 +21,6 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public LoginResponse login(LoginRequest request) {
-        System.out.println("login test");
         User user = userRepository.findByUserName(request.userName())
                 .filter(u -> passwordEncoder.matches(
                         request.password(), u.getPasswordHash()
