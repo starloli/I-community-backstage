@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Env / Secrets
+.env
+application-local.yml
+application-local.properties
