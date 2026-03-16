@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
+import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.repository.UserDao;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class UserService {
 
     private User getUser(String name) {
         User user =  userRepository.findByUserName(name)
-            .orElseThrow(() -> new RuntimeException("user not exists"));
+            .orElseThrow(() -> new NotFoundException("user not exists"));
         return user;
     }
 }
