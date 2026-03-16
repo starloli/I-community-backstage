@@ -1,16 +1,16 @@
 package com.example.demo2.dto.request;
 
-public record UserCreateRequest (
-    
-    String userName,
+public record UserCreateRequest(
 
-    String password,
+        String userName,
 
-    String fullName,
+        String password,
 
-    String email,
+        String fullName,
 
-    String phone,
+        String email,
 
-    String unitNumber
-) {}
+        String phone,
+
+        String unitNumber) {
+}
