@@ -2,6 +2,7 @@ package com.example.demo2.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.UserResponse;
@@ -18,6 +19,7 @@ public class UserService {
     private final UserDao userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserResponse createUser(UserCreateRequest request) {
         User user = new User(
             request.userName(),
@@ -32,6 +34,7 @@ public class UserService {
         return UserResponse.from(user);
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getProfileByName(String name) {
         return UserResponse.from(getUser(name));
     }
