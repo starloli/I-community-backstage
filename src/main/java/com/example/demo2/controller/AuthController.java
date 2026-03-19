@@ -15,6 +15,7 @@ import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.service.AuthService;
 import com.example.demo2.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,14 +29,14 @@ public class AuthController {
 
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
-                @RequestBody LoginRequest request
+                @Valid @RequestBody LoginRequest request
         ) {
                 return ResponseEntity.ok(authService.login(request));
         }
 
         @PostMapping("/register")
         public ResponseEntity<UserResponse> registerUser(
-                @RequestBody UserCreateRequest request
+                @Valid @RequestBody UserCreateRequest request
         ) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
         }
