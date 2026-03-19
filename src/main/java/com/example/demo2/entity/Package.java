@@ -2,7 +2,7 @@ package com.example.demo2.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.demo2.enums.PakageStatus;
+import com.example.demo2.enums.PackageStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +46,7 @@ public class Package {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PakageStatus status;
+    private PackageStatus status;
 
     private String notes;
     
