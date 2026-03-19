@@ -59,6 +59,12 @@ public class SecurityConfig {
                     "/auth/**"
                 ).permitAll()
 
+//              swagger顯示API
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/**"
+                ).permitAll()
+
                 .anyRequest().authenticated()
             )
             
