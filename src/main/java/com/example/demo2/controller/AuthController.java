@@ -1,5 +1,7 @@
 package com.example.demo2.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,9 +17,11 @@ import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.service.AuthService;
+import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ public class AuthController {
 
         private final AuthService authService;
         private final UserService userService;
+        private final FacilityService facilityService;
+
 
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
@@ -43,7 +49,12 @@ public class AuthController {
         @PostMapping("/regist-facility")
         public ResponseEntity<FacilityResponse> registFacility(
                         @RequestBody FacilityRegistRequest request) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(userService.registFacility(request));
+                return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
+        }
+
+        @GetMapping("/facilities")
+        public ResponseEntity<ArrayList<FacilityResponse>> getFacilities() {
+                return ResponseEntity.ok(facilityService.getFacilities());
         }
 
 }

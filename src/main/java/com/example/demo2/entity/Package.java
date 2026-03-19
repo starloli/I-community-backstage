@@ -51,5 +51,5 @@ public class Package {
     private String notes;
     
     @Column(nullable = false)
-    private Integer notified;
+    private boolean isNotified;
 }

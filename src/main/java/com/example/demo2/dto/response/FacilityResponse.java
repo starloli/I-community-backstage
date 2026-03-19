@@ -5,8 +5,9 @@ import java.time.LocalTime;
 import com.example.demo2.entity.Facility;
 
 public record FacilityResponse(
+    Integer id,
     String name,
-    String deString,
+    String description,
     Integer capacity,
     LocalTime openTime,
     LocalTime closeTime,
@@ -14,6 +15,7 @@ public record FacilityResponse(
 ) {
     public static FacilityResponse from(Facility facility) {
         return new FacilityResponse(
+            facility.getFacilityId(),
             facility.getName(),
             facility.getDescription(),
             facility.getCapacity(),

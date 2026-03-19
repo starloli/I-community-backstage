@@ -13,6 +13,5 @@ public record FacilityRegistRequest(
 
         LocalTime closeTime,
 
-        boolean isAvailable
-    ) {
+        boolean isAvailable) {
 }

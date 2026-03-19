@@ -48,8 +48,9 @@ public class Visitor {
 
     private LocalDateTime checkOutTime;
 
-    @Column(nullable = false)
-    private Integer registeredBy;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "register_id", nullable = false)
+    private User registeredBy;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -46,7 +46,9 @@ public class RepairRequest {
     @Enumerated(EnumType.STRING)
     private RepairStatus status;
 
-    private Integer handlerId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "handler_id", nullable = false)
+    private User handler;
 
     private LocalDateTime submittedAt;
 

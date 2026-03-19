@@ -47,7 +47,7 @@ public class User {
     private UserRole role;
 
     @Column(nullable = false)
-    private Integer is_active;
+    private boolean is_active;
 
     private LocalDateTime created_at;
 
@@ -66,6 +66,6 @@ public class User {
         this.phone = phone;
         this.unitNumber = unitNumber;
         this.role = UserRole.RESIDENT;
-        this.is_active = 0;
+        this.is_active = false;
     }
 }

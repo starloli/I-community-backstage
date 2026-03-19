@@ -38,7 +38,10 @@ public class Notification {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationType type;
+
     private String message;
-    private Integer isRead;
+
+    private boolean isRead;
+    
     private LocalDateTime createdAt;
 }
