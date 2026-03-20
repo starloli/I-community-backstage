@@ -39,6 +39,9 @@ public class Reservation {
     private Facility facility;
 
     @Column(nullable = false)
+    private String date;
+
+    @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
