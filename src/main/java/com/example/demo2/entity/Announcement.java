@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "announcements")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Announcement {
     
     @Id
@@ -39,10 +37,27 @@ public class Announcement {
     private User author;
     
     @Column(nullable = false)
-    private boolean is_pinned;
+    private Boolean isPinned;
     
     @Column(nullable = false)
     private LocalDateTime publishedAt;
     
     private LocalDateTime expiresAt;
+
+    public Announcement(
+        String title,
+        String content,
+        String category,
+        User author,
+        Boolean isPinned,
+        LocalDateTime expiresAt
+    ) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.author = author;
+        this.isPinned = isPinned;
+        this.publishedAt = LocalDateTime.now();
+        this.expiresAt = expiresAt;
+    }
 }

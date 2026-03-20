@@ -56,7 +56,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 .requestMatchers(
-                    "/auth/**"
+                    "/auth/**",
+                    "/admin/login",
+                    "/announ/**"
                 ).permitAll()
 
 //              swagger顯示API
@@ -64,6 +66,10 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/v3/**"
                 ).permitAll()
+                
+                .requestMatchers(
+                    "/admin/**"
+                ).hasRole("ADMIN")
 
                 .anyRequest().authenticated()
             )
