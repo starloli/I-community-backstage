@@ -1,6 +1,6 @@
 package com.example.demo2.dto.response;
 
-import com.example.demo2.enums.PakageStatus;
+import com.example.demo2.enums.PackageStatus;
 import com.example.demo2.entity.Package;
 
 public record PackageResponse(
@@ -11,7 +11,7 @@ public record PackageResponse(
     String courier,
     String arrivedAt,
     String pickupAt,
-    PakageStatus status,
+    PackageStatus status,
     String notes,
     Boolean isNotified
 ) {

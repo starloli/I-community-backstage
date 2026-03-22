@@ -11,7 +11,7 @@ import com.example.demo2.repository.PackageDao;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.entity.Package;
 import com.example.demo2.entity.User;
-import com.example.demo2.enums.PakageStatus;
+import com.example.demo2.enums.PackageStatus;
 import com.example.demo2.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class PackageService {
     public PackageResponse pickupById (Integer id, String pickupAt) {
         Package p = packageDao.findById(id)
                 .orElseThrow(() -> new NotFoundException("找不到包裹"));
-        p.setStatus(PakageStatus.PICKED_UP);
+        p.setStatus(PackageStatus.PICKED_UP);
         p.setPickupAt(pickupAt);
         return PackageResponse.from(p);
     }

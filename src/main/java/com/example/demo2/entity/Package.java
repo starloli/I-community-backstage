@@ -1,6 +1,6 @@
 package com.example.demo2.entity;
 
-import com.example.demo2.enums.PakageStatus;
+import com.example.demo2.enums.PackageStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class Package {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PakageStatus status;
+    private PackageStatus status;
 
     private String notes;
     
@@ -61,7 +61,7 @@ public class Package {
         this.trackingNumber = trackingNumber;
         this.courier = courier;
         this.arrivedAt = arrivedAt;
-        this.status = PakageStatus.WAITING;
+        this.status = PackageStatus.WAITING;
         this.notes = notes;
         this.notified = false;
     }
