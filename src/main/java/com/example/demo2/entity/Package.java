@@ -1,19 +1,14 @@
 package com.example.demo2.entity;
 
-import java.time.LocalDateTime;
-
 import com.example.demo2.enums.PakageStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,19 +23,19 @@ public class Package {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer packageId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private String recipientName;
+    private String phoneNumber;
+    private String unitNumber;
     
     @Column(nullable = false)
-    private String tracking_number;
+    private String trackingNumber;
 
     private String courier;
 
     @Column(nullable = false)
-    private LocalDateTime arrived_at;
+    private String arrivedAt;
 
-    private LocalDateTime pickup_at;
+    private String pickupAt;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -49,5 +44,25 @@ public class Package {
     private String notes;
     
     @Column(nullable = false)
-    private Integer notified;
+    private Boolean notified;
+
+    public Package(
+        String recipientName,
+        String phoneNumber,
+        String unitNumber,
+        String trackingNumber,
+        String courier,
+        String arrivedAt,
+        String notes
+    ) {
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
+        this.unitNumber = unitNumber;
+        this.trackingNumber = trackingNumber;
+        this.courier = courier;
+        this.arrivedAt = arrivedAt;
+        this.status = PakageStatus.WAITING;
+        this.notes = notes;
+        this.notified = false;
+    }
 }
