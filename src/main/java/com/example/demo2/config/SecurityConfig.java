@@ -58,7 +58,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/auth/**",
                     "/admin/login",
-                    "/announ/**"
+                    "/announ/**",
+                    "/statistics/**"
                 ).permitAll()
 
                 .requestMatchers(
