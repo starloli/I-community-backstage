@@ -39,6 +39,11 @@ public class UserService {
         return UserResponse.from(getUser(name));
     }
 
+    @Transactional(readOnly = true)
+    public long getTotalNumber() {
+        return userRepository.count();
+    }
+
     private User getUser(String name) {
         User user =  userRepository.findByUserName(name)
             .orElseThrow(() -> new NotFoundException("user not exists"));
