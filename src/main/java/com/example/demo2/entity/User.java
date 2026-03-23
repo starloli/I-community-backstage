@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String phone;

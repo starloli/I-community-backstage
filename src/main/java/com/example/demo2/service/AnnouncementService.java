@@ -40,7 +40,7 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public List<AnnouncementResponse> findAll() {
-        return announcementDao.findAll().stream().map(a -> AnnouncementResponse.from(a)).toList();
+        return announcementDao.findAll().stream().map(AnnouncementResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
