@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.FacilityRegistRequest;
 import com.example.demo2.dto.request.ReservationRequest;
-import com.example.demo2.dto.request.SearchReservationRequest;
 import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.ReservationResponse;
 import com.example.demo2.entity.Facility;
@@ -26,7 +25,7 @@ public class FacilityService {
     private final FacilityDao facilityRepository;
     private final ReservationDao reservationRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public FacilityResponse registFacility(FacilityRegistRequest request) {
         Facility facility = new Facility(
                 request.name(),
@@ -49,7 +48,7 @@ public class FacilityService {
         return facilityResponses;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ReservationResponse reserveFacility(ReservationRequest request) {
         Reservation reservation = new Reservation(
                 request.user(),
