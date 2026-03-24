@@ -32,7 +32,8 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(
-            Authentication authentication) {
+        Authentication authentication
+    ) {
         String name = authentication.getName();
         return ResponseEntity.ok(userService.getProfileByName(name));
     }
