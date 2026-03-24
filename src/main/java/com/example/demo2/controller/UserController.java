@@ -20,6 +20,7 @@ import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.UserService;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
