@@ -1,12 +1,10 @@
 package com.example.demo2.controller;
 
-import java.util.ArrayList;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.FacilityRegistRequest;
 import com.example.demo2.dto.response.FacilityResponse;
+=======
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+>>>>>>> parent of 5ce4729 (1)
 import com.example.demo2.dto.response.UserResponse;
-import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
-    private final FacilityService facilityService;
-
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(
@@ -37,6 +37,7 @@ public class UserController {
         String name = authentication.getName();
         return ResponseEntity.ok(userService.getProfileByName(name));
     }
+<<<<<<< HEAD
 
     @PostMapping("/regist-facility")
     public ResponseEntity<FacilityResponse> registFacility(
@@ -48,4 +49,6 @@ public class UserController {
     public ResponseEntity<ArrayList<FacilityResponse>> getFacilities() {
         return ResponseEntity.ok(facilityService.getFacilities());
     }
+=======
+>>>>>>> parent of 5ce4729 (1)
 }
