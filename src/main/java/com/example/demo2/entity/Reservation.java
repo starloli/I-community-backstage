@@ -2,7 +2,7 @@ package com.example.demo2.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.demo2.enums.VisitorStatus;
+import com.example.demo2.enums.ReservationStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,45 +15,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "visitors")
+@Table(name = "reservations")
 @Data
 @NoArgsConstructor
-public class Visitor {
+public class Reservation {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer visitorId;
-
-    @Column(nullable = false)
-    private String visitorName;
-
-    private String visitorPhone;
-
-    private String licensePlate;
+    private Integer reservationId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "host_user_id", nullable = false)
-    private User hostUser;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    private String purpose;
-
-//    @Column(nullable = false)
-    private LocalDateTime estimatedTime;
-    
-    private LocalDateTime checkInTime;
-
-    private LocalDateTime checkOutTime;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "facility_id", nullable = false)
+    private Facility facility;
 
     @Column(nullable = false)
-    private String registeredBy;
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
+
+    @Column(nullable = false)
+    private Integer attendees;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private VisitorStatus status; 
-    
+    private ReservationStatus status;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

@@ -31,23 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = resolveToken(request);
+            
+        if (token != null && jwtTokenProvider.validateToken(token)) {
 
-        System.out.println("🔥 Authorization header: " + request.getHeader("Authorization"));
-        System.out.println("🔥 Extracted token: " + token);
+            Authentication auth =
+                jwtTokenProvider.getAuthentication(token);
 
-        if (token != null) {
-            boolean valid = jwtTokenProvider.validateToken(token);
-            System.out.println("🔥 Token valid: " + valid);
-
-            if (valid) {
-                Authentication auth = jwtTokenProvider.getAuthentication(token);
-                System.out.println("🔥 Auth object: " + auth);
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+            SecurityContextHolder.getContext()
+                .setAuthentication(auth);
         }
 
         filterChain.doFilter(request, response);
+
     }
     
     private String resolveToken(HttpServletRequest request) {

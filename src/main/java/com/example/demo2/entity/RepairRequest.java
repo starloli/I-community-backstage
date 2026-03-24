@@ -2,7 +2,7 @@ package com.example.demo2.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.demo2.enums.VisitorStatus;
+import com.example.demo2.enums.RepairStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,45 +15,38 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "visitors")
+@Table(name = "repair_requests")
 @Data
 @NoArgsConstructor
-public class Visitor {
+public class RepairRequest {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer visitorId;
-
-    @Column(nullable = false)
-    private String visitorName;
-
-    private String visitorPhone;
-
-    private String licensePlate;
+    private Integer repairId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "host_user_id", nullable = false)
-    private User hostUser;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    private String purpose;
+    private String location;
 
-//    @Column(nullable = false)
-    private LocalDateTime estimatedTime;
-    
-    private LocalDateTime checkInTime;
+    private String category;
 
-    private LocalDateTime checkOutTime;
+    private String description;
 
-    @Column(nullable = false)
-    private String registeredBy;
+    private String imageUrl;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private VisitorStatus status; 
-    
+    private RepairStatus status;
+
+    private Integer handlerId;
+
+    private LocalDateTime submittedAt;
+
+    private LocalDateTime resolvedAt;
 }
