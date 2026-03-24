@@ -7,9 +7,7 @@ public record UserResponse(
     String userName,
     String fullName,
     String email,
-    String phone,
-    String unitNumber,
-    Boolean isActive
+    String unitNumber
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -17,9 +15,7 @@ public record UserResponse(
             user.getUserName(),
             user.getFullName(),
             user.getEmail(),
-            user.getPhone(),
-            user.getUnitNumber(),
-            user.getIs_active()
+            user.getUnitNumber()
         );
     }
 }
