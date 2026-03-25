@@ -15,3 +15,4 @@ public interface UserDao extends JpaRepository<User, Integer>{
     @Query("SELECT DISTINCT u.unitNumber FROM User u")
     List<String> findDistinctUnitNumbers();
 }
+

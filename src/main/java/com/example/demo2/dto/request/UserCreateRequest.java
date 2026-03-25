@@ -14,13 +14,15 @@ public record UserCreateRequest (
     )
     String userName,
 
-    String password,
+        String userName,
 
-    String fullName,
+        String password,
 
-    String email,
+        String fullName,
 
-    String phone,
+        String email,
 
-    String unitNumber
-) {}
+        String phone,
+
+        String unitNumber) {
+}

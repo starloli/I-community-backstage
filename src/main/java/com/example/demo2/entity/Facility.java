@@ -20,10 +20,10 @@ public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer facilityId;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     private String description;
 
     private Integer capacity;
@@ -33,5 +33,20 @@ public class Facility {
     private LocalTime closeTime;
 
     @Column(nullable = false)
-    private Integer isAvailable;
+    private boolean isAvailable;
+
+    public Facility(
+            String name,
+            String description,
+            Integer capacity,
+            LocalTime openTime,
+            LocalTime closeTime,
+            boolean isAvailable) {
+        this.name = name;
+        this.description = description;
+        this.capacity = capacity;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.isAvailable = isAvailable;
+    }
 }
