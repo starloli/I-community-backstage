@@ -1,6 +1,5 @@
 package com.example.demo2.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,6 @@ import com.example.demo2.dto.response.VisitorGetUserMassageResponse;
 import com.example.demo2.dto.response.VisitorResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.entity.Visitor;
-import com.example.demo2.exception.GlobalExceptionHandler;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.repository.VisitorDao;
 
