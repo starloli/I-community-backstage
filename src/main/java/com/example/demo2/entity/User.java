@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String phone;
@@ -47,7 +47,7 @@ public class User {
     private UserRole role;
 
     @Column(nullable = false)
-    private boolean is_active;
+    private Boolean is_active;
 
     private LocalDateTime created_at;
 
@@ -66,6 +66,7 @@ public class User {
         this.phone = phone;
         this.unitNumber = unitNumber;
         this.role = UserRole.RESIDENT;
-        this.is_active = false;
+        this.is_active = true;
+        this.created_at = LocalDateTime.now();
     }
 }
