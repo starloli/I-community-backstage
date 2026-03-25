@@ -24,6 +24,7 @@ import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.service.AnnouncementService;
 import com.example.demo2.service.AuthService;
 import com.example.demo2.service.PackageService;
+import com.example.demo2.service.RepairRequestService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class AdminController {
         private final AuthService authService;
         private final AnnouncementService announcementService;
         private final PackageService packageService;
+        private final RepairRequestService repairRequestService;
 
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
@@ -64,7 +66,9 @@ public class AdminController {
         }
 
         @DeleteMapping("/announ/{id}")
-        public ResponseEntity<Void> deleteById(@PathVariable("id") Integer id) {
+        public ResponseEntity<Void> deleteAnnounById(
+                @PathVariable("id") Integer id
+        ) {
                 announcementService.deleteById(id);
                 return ResponseEntity.noContent().build();
         }
@@ -95,5 +99,13 @@ public class AdminController {
                 @RequestBody String pickupAt
         ) {
                 return ResponseEntity.ok(packageService.pickupById(id, pickupAt));
+        }
+
+        @DeleteMapping("/repair/{id}")
+        public ResponseEntity<Void> deleteRepairById(
+                @PathVariable("id") Integer id
+        ) {
+                repairRequestService.deleteById(id);
+                return ResponseEntity.noContent().build();
         }
 }
