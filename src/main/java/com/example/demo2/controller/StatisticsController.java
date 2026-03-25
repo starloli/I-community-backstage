@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.service.UserService;
+import com.example.demo2.service.VisitorService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class StatisticsController {
     
     private final UserService userService;
+    private final VisitorService visitorService;
 
     @GetMapping("/user")
     public ResponseEntity<Long> getUserNum() {
         return ResponseEntity.ok(userService.getTotalNumber());
-    }   
+    }
+
+    @GetMapping("/visitor")
+    public ResponseEntity<Long> getVistorNum() {
+        return ResponseEntity.ok(visitorService.findTodayVisitorNum());
+    }
 }

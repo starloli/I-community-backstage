@@ -1,5 +1,7 @@
 package com.example.demo2.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.AllVisitorRequest;
 import com.example.demo2.dto.request.VisitorRequest;
@@ -235,6 +238,14 @@ public class VisitorService {
 	            return dto;
 	        }).collect(Collectors.toList());
 	    }
-	}
+    
+    @Transactional(readOnly = true)
+    public long findTodayVisitorNum() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime start = today.atStartOfDay();        // 今天 00:00:00
+        LocalDateTime end = today.plusDays(1).atStartOfDay(); // 明天 00:00:00
+        return visitorDao.countByCheckInTimeBetween(start, end);
+    }
+}
 	
 	
