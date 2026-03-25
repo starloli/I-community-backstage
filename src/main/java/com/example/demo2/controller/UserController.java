@@ -1,13 +1,16 @@
 package com.example.demo2.controller;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,9 +21,9 @@ import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.ReservationResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.service.FacilityService;
+import com.example.demo2.service.ReservationService;
 import com.example.demo2.service.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +34,7 @@ public class UserController {
 
     private final UserService userService;
     private final FacilityService facilityService;
-
+    private final ReservationService reservationService;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(
@@ -47,13 +50,38 @@ public class UserController {
     }
 
     @GetMapping("/facilities")
-    public ResponseEntity<ArrayList<FacilityResponse>> getFacilities() {
+    public ResponseEntity<List<FacilityResponse>> getFacilities() {
         return ResponseEntity.ok(facilityService.getFacilities());
     }
 
     @PostMapping("/reserve")
-    public ResponseEntity<ReservationResponse> reserveFacility(@RequestBody ReservationRequest reservation) {
-        return ResponseEntity.ok(facilityService.reserveFacility(reservation));
+    public ResponseEntity<ReservationResponse> reserveFacility(
+            @RequestBody ReservationRequest reservation) {
+        return ResponseEntity.ok(reservationService.reserveFacility(reservation));
     }
 
+    @GetMapping("/reservationsByUserId/{userId}")
+    public ResponseEntity<List<ReservationResponse>> getReservationsByUserId(
+            @PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(reservationService.getReservationsByUserId(userId));
+    }
+
+    @GetMapping("/reservationsByFacilityId/{facilityId}")
+    public ResponseEntity<List<ReservationResponse>> getReservationsByFacilityId(
+            @PathVariable("facilityId") Integer facilityId) {
+        return ResponseEntity.ok(reservationService.getReservationsByFacilityId(facilityId));
+    }
+
+    @GetMapping("/reservationsByFacilityIdAndUserId/{facilityId}/{userId}")
+    public ResponseEntity<List<ReservationResponse>> getReservationsByFacilityId(
+            @PathVariable("facilityId") Integer facilityId, @PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(reservationService.getReservationsByFacilityIdAndUserId(facilityId, userId));
+    }
+
+    @PutMapping("/cancelReservation")
+    public ResponseEntity<?> cancelReservation(
+            @RequestBody Integer reservationId) {
+        reservationService.cancelReservation(reservationId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of("message", "已取消預約"));
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.demo2.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.example.demo2.enums.ReservationStatus;
 
 import jakarta.persistence.Column;
@@ -50,7 +52,8 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     private String createdAt;
 
     public Reservation(

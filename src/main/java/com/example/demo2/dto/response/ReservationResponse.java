@@ -1,14 +1,12 @@
 package com.example.demo2.dto.response;
 
-
-import com.example.demo2.entity.Facility;
 import com.example.demo2.entity.Reservation;
-import com.example.demo2.entity.User;
 import com.example.demo2.enums.ReservationStatus;
 
 public record ReservationResponse(
-    User user,
-    Facility facility,
+    Integer reservationId,
+    String userName,
+    String facilityName,
     String date,
     String startTime,
     String endTime,
@@ -17,8 +15,9 @@ public record ReservationResponse(
 ) {
     public static ReservationResponse from(Reservation reservation){
         return new ReservationResponse(
-            reservation.getUser(),
-            reservation.getFacility(),
+            reservation.getReservationId(),
+            reservation.getUser().getUserName(),
+            reservation.getFacility().getName(),
             reservation.getDate(),
             reservation.getStartTime(),
             reservation.getEndTime(),
