@@ -41,15 +41,18 @@ public class Visitor {
 
     private String purpose;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    private LocalDateTime estimatedTime;
+    
     private LocalDateTime checkInTime;
 
     private LocalDateTime checkOutTime;
 
     @Column(nullable = false)
-    private Integer registeredBy;
+    private String registeredBy;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private VisitorStatus status;
+    private VisitorStatus status; 
+    
 }
