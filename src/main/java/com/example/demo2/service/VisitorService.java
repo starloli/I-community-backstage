@@ -246,6 +246,27 @@ public class VisitorService {
         LocalDateTime end = today.plusDays(1).atStartOfDay(); // 明天 00:00:00
         return visitorDao.countByCheckInTimeBetween(start, end);
     }
+
+    @Transactional(readOnly = true)
+    public List<AllVisitorRequest> findRecentThree() {
+        List<Visitor> visitors = visitorDao.findTop3ByCheckInTimeBeforeOrderByCheckInTimeDesc(LocalDateTime.now());
+        return visitors.stream().map(visitor -> {
+        	AllVisitorRequest dto = new AllVisitorRequest();
+        	dto.setVisitorId(visitor.getVisitorId());
+        	dto.setVisitorName(visitor.getVisitorName());
+        	dto.setVisitorPhone(visitor.getVisitorPhone());
+        	dto.setEstimatedTime(visitor.getEstimatedTime());
+            dto.setCheckInTime(visitor.getCheckInTime());
+            dto.setCheckOutTime(visitor.getCheckOutTime());
+            dto.setLicensePlate(visitor.getLicensePlate());
+            dto.setPurpose(visitor.getPurpose());
+            dto.setRegisteredBy(visitor.getRegisteredBy());
+            dto.setStatus(visitor.getStatus());
+            if (visitor.getHostUser() != null) {
+                dto.setResidentName(visitor.getHostUser().getFullName());
+                dto.setResidentialAddress(visitor.getHostUser().getUnitNumber());
+            }return dto;}).collect(Collectors.toList());
+    }
 }
 	
 	

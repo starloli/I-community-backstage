@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo2.dto.response.StatisticsResponse;
+import com.example.demo2.service.AnnouncementService;
+import com.example.demo2.service.PackageService;
+import com.example.demo2.service.RepairRequestService;
 import com.example.demo2.service.UserService;
 import com.example.demo2.service.VisitorService;
 
@@ -20,14 +24,20 @@ public class StatisticsController {
     
     private final UserService userService;
     private final VisitorService visitorService;
+    private final PackageService packageService;
+    private final AnnouncementService announcementService;
+    private final RepairRequestService repairRequestService;
 
-    @GetMapping("/user")
-    public ResponseEntity<Long> getUserNum() {
-        return ResponseEntity.ok(userService.getTotalNumber());
-    }
-
-    @GetMapping("/visitor")
-    public ResponseEntity<Long> getVistorNum() {
-        return ResponseEntity.ok(visitorService.findTodayVisitorNum());
+    @GetMapping
+    public ResponseEntity<StatisticsResponse> getStatistics() {
+        StatisticsResponse response = new StatisticsResponse(
+                userService.getTotalNumber(),
+                visitorService.findTodayVisitorNum(),
+                packageService.geWaittingNumber(),
+                repairRequestService.searchPendingNum(),
+                announcementService.findRecentThree(),
+                visitorService.findRecentThree()
+            );
+        return ResponseEntity.ok(response);
     }
 }

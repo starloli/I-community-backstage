@@ -13,4 +13,5 @@ public interface VisitorDao extends JpaRepository<Visitor, Integer>{
 	List<Visitor> findByHostUser_UnitNumber(String unitNumber);
 	List<Visitor> findByHostUser_UserName (String userName);
 	long countByCheckInTimeBetween(LocalDateTime start, LocalDateTime end);
+	List<Visitor> findTop3ByCheckInTimeBeforeOrderByCheckInTimeDesc(LocalDateTime now);
 }
