@@ -1,7 +1,5 @@
 package com.example.demo2.entity;
 
-import java.time.LocalDateTime;
-
 import com.example.demo2.enums.RepairStatus;
 
 import jakarta.persistence.Column;
@@ -44,9 +42,28 @@ public class RepairRequest {
     @Enumerated(EnumType.STRING)
     private RepairStatus status;
 
-    private Integer handlerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "handler_id")
+    private User handler;
 
-    private LocalDateTime submittedAt;
+    private String submittedAt;
 
-    private LocalDateTime resolvedAt;
+    private String resolvedAt;
+
+    public RepairRequest(
+        User user,
+        String location,
+        String category,
+        String description,
+        String imageUrl,
+        String submittedAt
+    ) {
+        this.user = user;
+        this.location = location;
+        this.category = category;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.status = RepairStatus.PENDING;
+        this.submittedAt = submittedAt;
+    }
 }

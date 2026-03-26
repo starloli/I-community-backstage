@@ -49,6 +49,11 @@ public class AnnouncementService {
                 .orElseThrow(() -> new NotFoundException("找不到公告")));
     }
 
+    @Transactional(readOnly = true)
+    public List<AnnouncementResponse> findRecentThree() {
+        return announcementDao.findTop3ByOrderByPublishedAtDesc().stream().map(AnnouncementResponse::from).toList();
+    }
+
     @Transactional
     public void deleteById(Integer id) {
         announcementDao.deleteById(id);

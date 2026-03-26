@@ -68,4 +68,9 @@ public class PackageService {
         p.setPickupAt(pickupAt);
         return PackageResponse.from(p);
     }
+
+    @Transactional(readOnly = true)
+    public long geWaittingNumber() {
+        return packageDao.countByStatus(PackageStatus.WAITING);
+    }
 }
