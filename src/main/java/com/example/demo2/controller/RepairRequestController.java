@@ -32,7 +32,6 @@ public class RepairRequestController {
         return ResponseEntity.ok(service.searchAll());
     }
 
-
     @PostMapping
     public ResponseEntity<RepairResponse> postRepairRequest(
         Authentication authentication,
