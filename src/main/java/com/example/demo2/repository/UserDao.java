@@ -14,4 +14,5 @@ public interface UserDao extends JpaRepository<User, Integer>{
     List<User> findByUnitNumber(String address);
     @Query("SELECT DISTINCT u.unitNumber FROM User u")
     List<String> findDistinctUnitNumbers();
+    Optional<User> findByEmail(String email);
 }

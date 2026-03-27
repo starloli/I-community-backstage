@@ -48,6 +48,12 @@ public class RepairRequestService {
     }
 
     @Transactional(readOnly = true)
+    public List<RepairResponse> searchUserAll(String name) {
+        User user = getUser(name);
+        return repairRequestDao.findByUser(user).stream().map(RepairResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
     public long searchPendingNum() {
         return repairRequestDao.countByStatus(RepairStatus.PENDING);
     }

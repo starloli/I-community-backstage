@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo2.dto.request.ForgotPasswordRequest;
 import com.example.demo2.dto.request.LoginRequest;
+import com.example.demo2.dto.request.ResetPasswordRequest;
 import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.UserResponse;
@@ -24,20 +26,32 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
     
-        private final AuthService authService;
-        private final UserService userService;
+	private final AuthService authService;
+	private final UserService userService;
 
-        @PostMapping("/login")
-        public ResponseEntity<LoginResponse> login(
-                @Valid @RequestBody LoginRequest request
-        ) {
-                return ResponseEntity.ok(authService.login(request));
-        }
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponse> login(
+		@Valid @RequestBody LoginRequest request
+	) {
+		return ResponseEntity.ok(authService.login(request));
+	}
 
-        @PostMapping("/register")
-        public ResponseEntity<UserResponse> registerUser(
-                @Valid @RequestBody UserCreateRequest request
-        ) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
-        }
+	@PostMapping("/register")
+	public ResponseEntity<UserResponse> registerUser(
+		@Valid @RequestBody UserCreateRequest request
+	) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
+	}
+
+	@PostMapping("/forgot-password")
+	public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+		authService.forgotPassword(request);
+		return ResponseEntity.ok("已傳送連結至信箱");
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+		authService.resetPassword(request);
+		return ResponseEntity.ok("密碼重設成功");
+	}
 }
