@@ -39,10 +39,10 @@ public class ReservationService {
                 request.endTime(),
                 request.attendees());
         if (reservation.getFacility().isReservable() == false) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"該設施不可預約");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施不可預約");
         }
-        if(reservation.getFacility().isAvailable() == false) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"該設施無法使用");
+        if (reservation.getFacility().isAvailable() == false) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施無法使用");
         }
         reservation.setStatus(ReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
@@ -92,7 +92,9 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public List<ReservationResponse> getReservationsByFacilityId(Integer facilityId) {
         return reservationRepository.findByFacility_FacilityId(facilityId).stream()
-                .map(r -> ReservationResponse.from(r)).toList();
+                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+                .map(r -> ReservationResponse.from(r))
+                .toList();
     }
 
     @Transactional(readOnly = true)
