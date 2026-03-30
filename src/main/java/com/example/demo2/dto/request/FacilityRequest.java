@@ -1,6 +1,6 @@
 package com.example.demo2.dto.request;
 
-public record FacilityRegistRequest(
+public record FacilityRequest(
         String name,
 
         String description,

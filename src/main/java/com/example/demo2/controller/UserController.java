@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo2.dto.request.FacilityRegistRequest;
+import com.example.demo2.dto.request.FacilityRequest;
 import com.example.demo2.dto.request.ReservationRequest;
 import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.ReservationResponse;
@@ -45,7 +45,7 @@ public class UserController {
 
     @PostMapping("/regist-facility")
     public ResponseEntity<FacilityResponse> registFacility(
-            @RequestBody FacilityRegistRequest request) {
+            @RequestBody FacilityRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
     }
 
@@ -54,10 +54,17 @@ public class UserController {
         return ResponseEntity.ok(facilityService.getFacilities());
     }
 
+    @PutMapping("/update-facility/{facilityId}")
+    public ResponseEntity<FacilityResponse> updateFacility(
+            @PathVariable("facilityId") Integer facilityId, @RequestBody FacilityRequest facilityRequest) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(facilityService.updateFacility(facilityId, facilityRequest));
+    }
+
     @PostMapping("/reserve")
     public ResponseEntity<ReservationResponse> reserveFacility(
             @RequestBody ReservationRequest reservation) {
-        return ResponseEntity.ok(reservationService.reserveFacility(reservation));
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservationService.reserveFacility(reservation));
     }
 
     @GetMapping("/reservationsByUserId/{userId}")
