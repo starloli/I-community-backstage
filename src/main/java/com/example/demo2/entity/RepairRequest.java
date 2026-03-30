@@ -45,7 +45,7 @@ public class RepairRequest {
     private RepairStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "handler_id", nullable = false)
+    @JoinColumn(name = "handler_id", nullable = true)
     private User handler;
 
     private LocalDateTime submittedAt;

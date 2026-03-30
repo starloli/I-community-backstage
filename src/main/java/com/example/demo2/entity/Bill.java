@@ -57,5 +57,5 @@ public class Bill {
     private String paymentMethod;
 
     @Column(nullable = false)
-    private LocalDateTime pcreatedAt;
+    private LocalDateTime createdAt;
 }

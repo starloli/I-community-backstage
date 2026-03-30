@@ -1,7 +1,5 @@
 package com.example.demo2.dto.request;
 
-import java.time.LocalTime;
-
 public record FacilityRegistRequest(
         String name,
 
@@ -9,9 +7,11 @@ public record FacilityRegistRequest(
 
         Integer capacity,
 
-        LocalTime openTime,
+        String openTime,
 
-        LocalTime closeTime,
+        String closeTime,
 
-        boolean isAvailable) {
+        Boolean isReservable,
+
+        Boolean isAvailable) {
 }

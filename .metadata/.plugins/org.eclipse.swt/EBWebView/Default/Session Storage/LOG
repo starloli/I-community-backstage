@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 2026/03/19-11:54:51.632 7020 Creating DB D:\Java Project\I-community-backstage\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage since it was missing.
 2026/03/19-11:54:51.638 7020 Reusing MANIFEST D:\Java Project\I-community-backstage\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/MANIFEST-000001
+=======
+2026/03/19-15:08:44.308 576c Reusing MANIFEST D:\文件\I-community\I-community-backstage\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/MANIFEST-000001
+2026/03/19-15:08:44.310 576c Recovering log #3
+2026/03/19-15:08:44.314 576c Reusing old log D:\文件\I-community\I-community-backstage\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Session Storage/000003.log 
+>>>>>>> origin/starlo

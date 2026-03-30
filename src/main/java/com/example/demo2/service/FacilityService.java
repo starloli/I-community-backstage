@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.FacilityRegistRequest;
 import com.example.demo2.dto.response.FacilityResponse;
@@ -15,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class FacilityService {
-    
+
     private final FacilityDao facilityRepository;
-    
+
+    @Transactional
     public FacilityResponse registFacility(FacilityRegistRequest request) {
         Facility facility = new Facility(
                 request.name(),
@@ -25,11 +27,13 @@ public class FacilityService {
                 request.capacity(),
                 request.openTime(),
                 request.closeTime(),
+                request.isReservable(),
                 request.isAvailable());
         facilityRepository.save(facility);
         return FacilityResponse.from(facility);
     }
 
+    @Transactional(readOnly = true)
     public ArrayList<FacilityResponse> getFacilities() {
         List<Facility> facilities = facilityRepository.findAll();
         ArrayList<FacilityResponse> facilityResponses = new ArrayList<>();
