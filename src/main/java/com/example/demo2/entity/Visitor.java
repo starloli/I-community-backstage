@@ -41,16 +41,18 @@ public class Visitor {
 
     private String purpose;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    private LocalDateTime estimatedTime;
+    
     private LocalDateTime checkInTime;
 
     private LocalDateTime checkOutTime;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "register_id", nullable = false)
-    private User registeredBy;
+    @Column(nullable = false)
+    private String registeredBy;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private VisitorStatus status;
+    private VisitorStatus status; 
+    
 }

@@ -39,13 +39,18 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public List<AnnouncementResponse> findAll() {
-        return announcementDao.findAll().stream().map(a -> AnnouncementResponse.from(a)).toList();
+        return announcementDao.findAll().stream().map(AnnouncementResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
     public AnnouncementResponse findById(Integer id) {
         return AnnouncementResponse.from(announcementDao.findByAnnouncementId(id)
                 .orElseThrow(() -> new NotFoundException("找不到公告")));
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnnouncementResponse> findRecentThree() {
+        return announcementDao.findTop3ByOrderByPublishedAtDesc().stream().map(AnnouncementResponse::from).toList();
     }
 
     @Transactional
