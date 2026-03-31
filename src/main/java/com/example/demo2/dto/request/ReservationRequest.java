@@ -6,6 +6,8 @@ public record ReservationRequest(
     String date,
     String startTime,
     String endTime,
-    Integer attendees
+    Integer attendees,
+    Boolean isReservable,
+    Boolean isAvailable
 ) {
 }
