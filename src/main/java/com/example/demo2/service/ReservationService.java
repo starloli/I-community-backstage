@@ -37,7 +37,9 @@ public class ReservationService {
                 request.date(),
                 request.startTime(),
                 request.endTime(),
-                request.attendees());
+                request.attendees(),
+                request.isReservable(),
+                request.isAvailable());
         if (reservation.getFacility().isReservable() == false) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施不可預約");
         }
@@ -55,20 +57,26 @@ public class ReservationService {
         if (request.facility() != null && request.user() != null) {
             List<Reservation> reservations = reservationRepository.findByFacility_FacilityIdAndUser_UserId(
                     request.facility().getFacilityId(), request.user().getUserId());
-            for (Reservation reservation : reservations) {
-                reservationResponses.add(ReservationResponse.from(reservation));
+            if (reservations != null) {
+                for (Reservation reservation : reservations) {
+                    reservationResponses.add(ReservationResponse.from(reservation));
+                }
             }
         } else if (request.facility() != null) {
             List<Reservation> reservations = reservationRepository.findByFacility_FacilityId(
                     request.facility().getFacilityId());
-            for (Reservation reservation : reservations) {
-                reservationResponses.add(ReservationResponse.from(reservation));
+            if (reservations != null) {
+                for (Reservation reservation : reservations) {
+                    reservationResponses.add(ReservationResponse.from(reservation));
+                }
             }
         } else {
             List<Reservation> reservations = reservationRepository.findByUser_UserId(
                     request.user().getUserId());
-            for (Reservation reservation : reservations) {
-                reservationResponses.add(ReservationResponse.from(reservation));
+            if (reservations != null) {
+                for (Reservation reservation : reservations) {
+                    reservationResponses.add(ReservationResponse.from(reservation));
+                }
             }
         }
         return reservationResponses;
