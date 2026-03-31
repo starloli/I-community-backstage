@@ -37,94 +37,94 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
     
-        private final AuthService authService;
-        private final AnnouncementService announcementService;
-        private final PackageService packageService;
-        private final RepairRequestService repairRequestService;
+    private final AuthService authService;
+    private final AnnouncementService announcementService;
+    private final PackageService packageService;
+    private final RepairRequestService repairRequestService;
 
-        @PostMapping("/login")
-        public ResponseEntity<LoginResponse> login(
-                @Valid @RequestBody LoginRequest request
-        ) {
-                return ResponseEntity.ok(authService.loginAdmin(request));
-        }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(authService.loginAdmin(request));
+    }
 
-        @PostMapping("/announ")
-        public ResponseEntity<AnnouncementResponse> postAnnouncement(
-                @Valid @RequestBody AnnouncementCreateRequest request,
-                Authentication authentication
-        ) {
-                String name = authentication.getName();
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(announcementService.CreateAnnouncement(request, name));
-        }
+    @PostMapping("/announ")
+    public ResponseEntity<AnnouncementResponse> postAnnouncement(
+            @Valid @RequestBody AnnouncementCreateRequest request,
+            Authentication authentication
+    ) {
+        String name = authentication.getName();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(announcementService.CreateAnnouncement(request, name));
+    }
 
-        @PutMapping("/announ/{id}")
-        public ResponseEntity<AnnouncementResponse> putById(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody AnnouncementCreateRequest request
-        ) {
-                return ResponseEntity.ok(announcementService.updateById(id, request));
-        }
+    @PutMapping("/announ/{id}")
+    public ResponseEntity<AnnouncementResponse> putById(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody AnnouncementCreateRequest request
+    ) {
+        return ResponseEntity.ok(announcementService.updateById(id, request));
+    }
 
-        @DeleteMapping("/announ/{id}")
-        public ResponseEntity<Void> deleteAnnounById(
-                @PathVariable("id") Integer id
-        ) {
-                announcementService.deleteById(id);
-                return ResponseEntity.noContent().build();
-        }
+    @DeleteMapping("/announ/{id}")
+    public ResponseEntity<Void> deleteAnnounById(
+            @PathVariable("id") Integer id
+    ) {
+        announcementService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
-        @GetMapping("/package")
-        public ResponseEntity<List<PackageResponse>> getAll() {
-                return ResponseEntity.ok(packageService.searchAll());
-        }
+    @GetMapping("/package")
+    public ResponseEntity<List<PackageResponse>> getAll() {
+        return ResponseEntity.ok(packageService.searchAll());
+    }
 
-        @PostMapping("/package")
-        public ResponseEntity<PackageResponse> postPackage(
-                @Valid @RequestBody PackageRequest r
-        ) {
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(packageService.createPackage(r));
-        }
+    @PostMapping("/package")
+    public ResponseEntity<PackageResponse> postPackage(
+            @Valid @RequestBody PackageRequest r
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(packageService.createPackage(r));
+    }
 
-        @PutMapping("/package/{id}/notify")
-        public ResponseEntity<PackageResponse> notifyPackage(
-                @PathVariable("id") Integer id
-        ) {
-                return ResponseEntity.ok(packageService.notifyById(id));
-        }
+    @PutMapping("/package/{id}/notify")
+    public ResponseEntity<PackageResponse> notifyPackage(
+            @PathVariable("id") Integer id
+    ) {
+        return ResponseEntity.ok(packageService.notifyById(id));
+    }
 
-        @PutMapping("/package/{id}/pickup")
-        public ResponseEntity<PackageResponse> pickupPackage(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody String pickupAt
-        ) {
-                return ResponseEntity.ok(packageService.pickupById(id, pickupAt));
-        }
+    @PutMapping("/package/{id}/pickup")
+    public ResponseEntity<PackageResponse> pickupPackage(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody String pickupAt
+    ) {
+        return ResponseEntity.ok(packageService.pickupById(id, pickupAt));
+    }
 
-        @PutMapping("/repair/{id}")
-        public ResponseEntity<RepairResponse> updateRepairById(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody RepairUpdateRequest u
-        ) {
-                return ResponseEntity.ok(repairRequestService.updateById(id, u));
-        }
+    @PutMapping("/repair/{id}")
+    public ResponseEntity<RepairResponse> updateRepairById(
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody RepairUpdateRequest u
+    ) {
+        return ResponseEntity.ok(repairRequestService.updateById(id, u));
+    }
 
-        @PutMapping("/repair/{id}/complete")
-        public ResponseEntity<RepairResponse> completeRepairById(
-                @PathVariable("id") Integer id,
-                Authentication authentication
-        ) {
-                String name = authentication.getName();     
-                return ResponseEntity.ok(repairRequestService.completeById(id, name));
-        }
+    @PutMapping("/repair/{id}/complete")
+    public ResponseEntity<RepairResponse> completeRepairById(
+            @PathVariable("id") Integer id,
+            Authentication authentication
+    ) {
+        String name = authentication.getName();     
+        return ResponseEntity.ok(repairRequestService.completeById(id, name));
+    }
 
-        @DeleteMapping("/repair/{id}")
-        public ResponseEntity<Void> deleteRepairById(
-                @PathVariable("id") Integer id
-        ) {
-                repairRequestService.deleteById(id);
-                return ResponseEntity.noContent().build();
-        }
+    @DeleteMapping("/repair/{id}")
+    public ResponseEntity<Void> deleteRepairById(
+            @PathVariable("id") Integer id
+    ) {
+        repairRequestService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
