@@ -1,7 +1,5 @@
 package com.example.demo2.entity;
 
-import java.time.LocalTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,22 +14,44 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Facility {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer facilityId;
-    
+
     @Column(nullable = false)
     private String name;
-    
+
     private String description;
 
+    @Column(nullable = false)
     private Integer capacity;
 
-    private LocalTime openTime;
-
-    private LocalTime closeTime;
+    @Column(nullable = false)
+    private String openTime;
 
     @Column(nullable = false)
-    private Integer isAvailable;
+    private String closeTime;
+
+    @Column(nullable = false)
+    private boolean isReservable;
+
+    @Column(nullable = false)
+    private boolean isAvailable;
+
+    public Facility(
+            String name,
+            String description,
+            Integer capacity,
+            String openTime,
+            String closeTime,
+            boolean isReservable,
+            boolean isAvailable) {
+        this.name = name;
+        this.description = description;
+        this.capacity = capacity;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.isReservable = isReservable;
+        this.isAvailable = isAvailable;
+    }
 }

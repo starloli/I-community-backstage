@@ -1,6 +1,6 @@
 package com.example.demo2.entity;
 
-import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.example.demo2.enums.ReservationStatus;
 
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Reservation {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reservationId;
@@ -37,10 +37,13 @@ public class Reservation {
     private Facility facility;
 
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private String date;
 
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private String startTime;
+
+    @Column(nullable = false)
+    private String endTime;
 
     @Column(nullable = false)
     private Integer attendees;
@@ -49,6 +52,22 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private String createdAt;
+
+    public Reservation(
+            User user,
+            Facility facility,
+            String date,
+            String startTime,
+            String endTime,
+            Integer attendees) {
+        this.user = user;
+        this.facility = facility;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.attendees = attendees;
+    }
 }

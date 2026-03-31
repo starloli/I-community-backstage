@@ -62,6 +62,12 @@ public class SecurityConfig {
                     "/statistics/**"
                 ).permitAll()
 
+//              swagger顯示API
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/**"
+                ).permitAll()
+                
                 .requestMatchers(
                     "/admin/**"
                 ).hasRole("ADMIN")

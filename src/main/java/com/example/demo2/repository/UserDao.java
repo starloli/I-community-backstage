@@ -16,3 +16,4 @@ public interface UserDao extends JpaRepository<User, Integer>{
     List<String> findDistinctUnitNumbers();
     Optional<User> findByEmail(String email);
 }
+
