@@ -52,12 +52,6 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-    @Column(nullable = false)
-    private Boolean isReservable;
-
-    @Column(nullable = false)
-    private Boolean isAvailable;
-
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private String createdAt;
@@ -68,18 +62,12 @@ public class Reservation {
             String date,
             String startTime,
             String endTime,
-            Integer attendees,
-            Boolean isReservable,
-            Boolean isAvailable
-        ) {
+            Integer attendees) {
         this.user = user;
         this.facility = facility;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.attendees = attendees;
-        this.isReservable = isReservable;
-        this.isAvailable = isAvailable;
-        this.status = ReservationStatus.CONFIRMED;
     }
 }
