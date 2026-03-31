@@ -68,6 +68,7 @@ public class AuthService {
         return new LoginResponse(accessToken);
     }
 
+    @Transactional
     public void forgotPassword(ForgotPasswordRequest request) {
 
 		Optional<User> userOpt = userDao.findByEmail(request.getEmail());
@@ -80,23 +81,23 @@ public class AuthService {
 		}
 	}
 
+    @Transactional
 	public void resetPassword(@RequestBody ResetPasswordRequest request) {
 
 		PasswordResetToken token = tokenDao.findByToken(request.getToken())
 				.orElseThrow(() -> new RuntimeException("無效的Token"));
-
+        
 		if (token.isUsed() || token.getExpiryDate().isBefore(LocalDateTime.now())) {
 				throw new RuntimeException("Token過期或已被使用");
 		}
 
 		User user = token.getUser();
 		user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-		userDao.save(user);
 
 		token.setUsed(true);
-		tokenDao.save(token);
 	}
 
+    @Transactional
     public String createResetToken(User user) {
         String token = UUID.randomUUID().toString();
 
