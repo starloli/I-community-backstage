@@ -1,5 +1,7 @@
 package com.example.demo2.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,14 +38,15 @@ public class ReservationService {
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到用戶")),
                 this.facilityRepository.findById(request.facilityId() != null ? request.facilityId() : 0).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到設施")),
-                request.date(),
-                request.startTime(),
-                request.endTime(),
+                LocalDate.parse(request.date()),
+                LocalTime.parse(request.startTime()),
+                LocalTime.parse(request.endTime()),
                 request.attendees());
-        Integer resAttendees = this.reservationRepository.sumAttendeesByFacilityIdAndDateAndStartTime(
+        Integer resAttendees = this.reservationRepository.sumAttendeesByFacilityIdAndDateAndStartTimeAndStatus(
                 reservation.getFacility().getFacilityId(),
                 reservation.getDate(),
-                reservation.getStartTime());
+                reservation.getStartTime(),
+                ReservationStatus.CONFIRMED);
         if (reservation.getFacility().isReservable() == false) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施當前不可預約");
         }
@@ -59,7 +62,7 @@ public class ReservationService {
         notificationService.sendReservationSuccess(
                 reservation.getUser().getEmail(),
                 reservation.getFacility().getName(),
-                reservation.getStartTime());
+                reservation.getDate().atTime(reservation.getStartTime()));
         return ReservationResponse.from(reservation);
     }
 

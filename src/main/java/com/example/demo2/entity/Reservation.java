@@ -1,5 +1,10 @@
 package com.example.demo2.entity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.example.demo2.enums.ReservationStatus;
@@ -37,13 +42,13 @@ public class Reservation {
     private Facility facility;
 
     @Column(nullable = false)
-    private String date;
+    private LocalDate date;
 
     @Column(nullable = false)
-    private String startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private String endTime;
+    private LocalTime endTime;
 
     @Column(nullable = false)
     private Integer attendees;
@@ -52,6 +57,8 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    private Boolean isNotified = false;
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private String createdAt;
@@ -59,15 +66,16 @@ public class Reservation {
     public Reservation(
             User user,
             Facility facility,
-            String date,
-            String startTime,
-            String endTime,
+            LocalDate Date,
+            LocalTime startTime,
+            LocalTime endTime,
             Integer attendees) {
         this.user = user;
         this.facility = facility;
-        this.date = date;
+        this.date = Date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.attendees = attendees;
+        this.createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss"));
     }
 }
