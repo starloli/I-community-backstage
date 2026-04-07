@@ -16,15 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.AnnouncementCreateRequest;
+import com.example.demo2.dto.request.FacilityRequest;
 import com.example.demo2.dto.request.LoginRequest;
 import com.example.demo2.dto.request.PackageRequest;
 import com.example.demo2.dto.request.RepairUpdateRequest;
 import com.example.demo2.dto.response.AnnouncementResponse;
+import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.dto.response.RepairResponse;
 import com.example.demo2.service.AnnouncementService;
 import com.example.demo2.service.AuthService;
+import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.PackageService;
 import com.example.demo2.service.RepairRequestService;
 
@@ -36,24 +39,23 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
-    
+
         private final AuthService authService;
         private final AnnouncementService announcementService;
         private final PackageService packageService;
         private final RepairRequestService repairRequestService;
+        private final FacilityService facilityService;
 
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
-                @Valid @RequestBody LoginRequest request
-        ) {
+                        @Valid @RequestBody LoginRequest request) {
                 return ResponseEntity.ok(authService.loginAdmin(request));
         }
 
         @PostMapping("/announ")
         public ResponseEntity<AnnouncementResponse> postAnnouncement(
-                @Valid @RequestBody AnnouncementCreateRequest request,
-                Authentication authentication
-        ) {
+                        @Valid @RequestBody AnnouncementCreateRequest request,
+                        Authentication authentication) {
                 String name = authentication.getName();
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(announcementService.CreateAnnouncement(request, name));
@@ -61,16 +63,14 @@ public class AdminController {
 
         @PutMapping("/announ/{id}")
         public ResponseEntity<AnnouncementResponse> putById(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody AnnouncementCreateRequest request
-        ) {
+                        @PathVariable("id") Integer id,
+                        @Valid @RequestBody AnnouncementCreateRequest request) {
                 return ResponseEntity.ok(announcementService.updateById(id, request));
         }
 
         @DeleteMapping("/announ/{id}")
         public ResponseEntity<Void> deleteAnnounById(
-                @PathVariable("id") Integer id
-        ) {
+                        @PathVariable("id") Integer id) {
                 announcementService.deleteById(id);
                 return ResponseEntity.noContent().build();
         }
@@ -82,49 +82,56 @@ public class AdminController {
 
         @PostMapping("/package")
         public ResponseEntity<PackageResponse> postPackage(
-                @Valid @RequestBody PackageRequest r
-        ) {
+                        @Valid @RequestBody PackageRequest r) {
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(packageService.createPackage(r));
         }
 
         @PutMapping("/package/{id}/notify")
         public ResponseEntity<PackageResponse> notifyPackage(
-                @PathVariable("id") Integer id
-        ) {
+                        @PathVariable("id") Integer id) {
                 return ResponseEntity.ok(packageService.notifyById(id));
         }
 
         @PutMapping("/package/{id}/pickup")
         public ResponseEntity<PackageResponse> pickupPackage(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody String pickupAt
-        ) {
+                        @PathVariable("id") Integer id,
+                        @Valid @RequestBody String pickupAt) {
                 return ResponseEntity.ok(packageService.pickupById(id, pickupAt));
         }
 
         @PutMapping("/repair/{id}")
         public ResponseEntity<RepairResponse> updateRepairById(
-                @PathVariable("id") Integer id,
-                @Valid @RequestBody RepairUpdateRequest u
-        ) {
+                        @PathVariable("id") Integer id,
+                        @Valid @RequestBody RepairUpdateRequest u) {
                 return ResponseEntity.ok(repairRequestService.updateById(id, u));
         }
 
         @PutMapping("/repair/{id}/complete")
         public ResponseEntity<RepairResponse> completeRepairById(
-                @PathVariable("id") Integer id,
-                Authentication authentication
-        ) {
-                String name = authentication.getName();     
+                        @PathVariable("id") Integer id,
+                        Authentication authentication) {
+                String name = authentication.getName();
                 return ResponseEntity.ok(repairRequestService.completeById(id, name));
         }
 
         @DeleteMapping("/repair/{id}")
         public ResponseEntity<Void> deleteRepairById(
-                @PathVariable("id") Integer id
-        ) {
+                        @PathVariable("id") Integer id) {
                 repairRequestService.deleteById(id);
                 return ResponseEntity.noContent().build();
+        }
+
+        @PostMapping("/regist-facility")
+        public ResponseEntity<FacilityResponse> registFacility(
+                        @RequestBody FacilityRequest request) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
+        }
+
+        @PutMapping("/update-facility/{facilityId}")
+        public ResponseEntity<FacilityResponse> updateFacility(
+                        @PathVariable("facilityId") Integer facilityId, @RequestBody FacilityRequest facilityRequest) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                                .body(facilityService.updateFacility(facilityId, facilityRequest));
         }
 }

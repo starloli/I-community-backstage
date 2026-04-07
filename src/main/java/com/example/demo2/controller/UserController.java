@@ -49,22 +49,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfileByName(name));
     }
 
-    @PostMapping("/regist-facility")
-    public ResponseEntity<FacilityResponse> registFacility(
-            @RequestBody FacilityRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
-    }
-
     @GetMapping("/facilities")
     public ResponseEntity<List<FacilityResponse>> getFacilities() {
         return ResponseEntity.ok(facilityService.getFacilities());
-    }
-
-    @PutMapping("/update-facility/{facilityId}")
-    public ResponseEntity<FacilityResponse> updateFacility(
-            @PathVariable("facilityId") Integer facilityId, @RequestBody FacilityRequest facilityRequest) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .body(facilityService.updateFacility(facilityId, facilityRequest));
     }
 
     @PostMapping("/reserve")
