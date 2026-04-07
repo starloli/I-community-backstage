@@ -12,6 +12,7 @@ import com.example.demo2.dto.request.FacilityRequest;
 import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.entity.Facility;
 import com.example.demo2.repository.FacilityDao;
+import com.example.demo2.repository.ReservationDao;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class FacilityService {
 
     private final FacilityDao facilityRepository;
+    private final ReservationDao reservationRepository;
 
     @Transactional
     public FacilityResponse registFacility(FacilityRequest request) {
@@ -47,6 +49,12 @@ public class FacilityService {
         facility.setReservable(request.isReservable());
         facility.setAvailable(request.isAvailable());
         return FacilityResponse.from(facility);
+    }
+
+    @Transactional
+    public void deleteFacility(Integer id) {
+        reservationRepository.deleteByFacility_FacilityId(id);
+        facilityRepository.deleteById(id != null ? id : 0);
     }
 
     @Transactional(readOnly = true)

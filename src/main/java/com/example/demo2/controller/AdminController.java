@@ -134,4 +134,10 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                                 .body(facilityService.updateFacility(facilityId, facilityRequest));
         }
+
+        @DeleteMapping("/delete-facility/{facilityId}")
+        public ResponseEntity<Void> deleteFacility(@PathVariable("facilityId") Integer facilityId) {
+                facilityService.deleteFacility(facilityId);
+                return ResponseEntity.noContent().build();
+        }
 }

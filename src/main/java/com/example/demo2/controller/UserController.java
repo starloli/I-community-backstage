@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo2.dto.request.FacilityRequest;
 import com.example.demo2.dto.request.ReservationRequest;
 import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.PackageResponse;
