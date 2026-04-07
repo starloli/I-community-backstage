@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
@@ -52,13 +52,12 @@ public class User {
     private LocalDateTime created_at;
 
     public User(
-        String userName,
-        String passwordHash,
-        String fullName,
-        String email,
-        String phone,
-        String unitNumber
-    ) {
+            String userName,
+            String passwordHash,
+            String fullName,
+            String email,
+            String phone,
+            String unitNumber) {
         this.userName = userName;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
