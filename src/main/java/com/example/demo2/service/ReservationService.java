@@ -30,10 +30,10 @@ public class ReservationService {
     @Transactional
     public ReservationResponse reserveFacility(ReservationRequest request) {
         Reservation reservation = new Reservation(
-                this.userRepository.findById(request.userId()).orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "用戶不存在")),
-                this.facilityRepository.findById(request.facilityId()).orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "設施不存在")),
+                this.userRepository.findById(request.userId() != null ? request.userId() : 0).orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到用戶")),
+                this.facilityRepository.findById(request.facilityId() != null ? request.facilityId() : 0).orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到設施")),
                 request.date(),
                 request.startTime(),
                 request.endTime(),
@@ -76,7 +76,7 @@ public class ReservationService {
 
     @Transactional
     public void cancelReservation(Integer reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Reservation reservation = reservationRepository.findById(reservationId != null ? reservationId : 0)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到預約資料"));
         if (ReservationStatus.CANCELLED.equals(reservation.getStatus())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "無法再次取消");

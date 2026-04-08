@@ -9,6 +9,7 @@ public record FacilityResponse(
     Integer capacity,
     String openTime,
     String closeTime,
+    boolean isReservable,
     boolean isAvailable
 ) {
     public static FacilityResponse from(Facility facility) {
@@ -19,6 +20,7 @@ public record FacilityResponse(
             facility.getCapacity(),
             facility.getOpenTime(),
             facility.getCloseTime(),
+            facility.isReservable(),
             facility.isAvailable()
         );
     }

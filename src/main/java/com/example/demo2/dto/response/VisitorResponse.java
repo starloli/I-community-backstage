@@ -2,7 +2,6 @@ package com.example.demo2.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.example.demo2.entity.User;
 import com.example.demo2.entity.Visitor;
 import com.example.demo2.enums.VisitorStatus;
 

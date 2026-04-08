@@ -2,8 +2,6 @@ package com.example.demo2.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import com.example.demo2.enums.UserRole;
 
 import jakarta.persistence.Column;
@@ -41,8 +39,7 @@ public class User {
 
     private String phone;
 
-    @Column(nullable = false)
-    @UniqueElements
+    @Column(nullable = false, unique = true)
     private String unitNumber;
 
     @Column(nullable = false)

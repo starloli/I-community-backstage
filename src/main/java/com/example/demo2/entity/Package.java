@@ -1,7 +1,5 @@
 package com.example.demo2.entity;
 
-import java.time.LocalDateTime;
-
 import com.example.demo2.enums.PackageStatus;
 
 import jakarta.persistence.Column;
