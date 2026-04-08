@@ -34,8 +34,13 @@ public class ModifyResidentService {
 		if (request.getRole() == UserRole.ADMIN || request.getRole() == UserRole.SUPER_ADMIN) {
 	        throw new RuntimeException("權限不足：您無法將住戶提升為管理員");
 	    }
-
+		
+		if (targetUser.getIs_active() != request.getIs_active()) {
+	        throw new RuntimeException("權限不足：普通管理員無法啟用或停用帳號");
+	    }
+		
 		// 執行行政與資產資料更新 (不包含 Role 和 isActive)
+		
 		updateGeneralInfoAndAssets(targetUser, request);
 	}
 
