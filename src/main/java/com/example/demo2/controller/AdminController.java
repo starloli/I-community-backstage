@@ -75,10 +75,10 @@ public class AdminController {
                 return ResponseEntity.noContent().build();
         }
 
-        @GetMapping("/package")
-        public ResponseEntity<List<PackageResponse>> getAll() {
-                return ResponseEntity.ok(packageService.searchAll());
-        }
+    @GetMapping("/package")
+    public ResponseEntity<List<PackageResponse>> getAll() {
+        return ResponseEntity.ok(packageService.searchAll());
+    }
 
         @PostMapping("/package")
         public ResponseEntity<PackageResponse> postPackage(
