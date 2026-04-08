@@ -18,22 +18,21 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AnnouncementService {
-    
+
     private final AnnouncementDao announcementDao;
     private final UserDao userDao;
-    
+
     @Transactional
     public AnnouncementResponse CreateAnnouncement(AnnouncementCreateRequest request, String name) {
         User author = userDao.findByUserName(name)
                 .orElseThrow(() -> new NotFoundException("user not exists"));
         Announcement announcement = new Announcement(
-            request.title(),
-            request.content(),
-            request.category(),
-            author,
-            request.isPinned(),
-            request.expiresAt()
-        );
+                request.title(),
+                request.content(),
+                request.category(),
+                author,
+                request.isPinned(),
+                request.expiresAt());
         announcementDao.save(announcement);
         return AnnouncementResponse.from(announcement);
     }
@@ -49,9 +48,14 @@ public class AnnouncementService {
                 .orElseThrow(() -> new NotFoundException("找不到公告")));
     }
 
+    @Transactional(readOnly = true)
+    public List<AnnouncementResponse> findRecentThree() {
+        return announcementDao.findTop3ByOrderByPublishedAtDesc().stream().map(AnnouncementResponse::from).toList();
+    }
+
     @Transactional
     public void deleteById(Integer id) {
-        announcementDao.deleteById(id);
+        announcementDao.deleteById(id != null ? id : 0);
     }
 
     @Transactional
