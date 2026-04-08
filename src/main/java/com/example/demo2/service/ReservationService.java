@@ -1,6 +1,9 @@
 package com.example.demo2.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,7 @@ public class ReservationService {
     private final ReservationDao reservationRepository;
     private final UserDao userRepository;
     private final FacilityDao facilityRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public ReservationResponse reserveFacility(ReservationRequest request) {
@@ -34,18 +38,31 @@ public class ReservationService {
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到用戶")),
                 this.facilityRepository.findById(request.facilityId() != null ? request.facilityId() : 0).orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到設施")),
-                request.date(),
-                request.startTime(),
-                request.endTime(),
+                LocalDate.parse(request.date()),
+                LocalTime.parse(request.startTime()),
+                LocalTime.parse(request.endTime()),
                 request.attendees());
+        Integer resAttendees = this.reservationRepository.sumAttendeesByFacilityIdAndDateAndStartTimeAndStatus(
+                reservation.getFacility().getFacilityId(),
+                reservation.getDate(),
+                reservation.getStartTime(),
+                ReservationStatus.CONFIRMED);
         if (reservation.getFacility().isReservable() == false) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施不可預約");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施當前不可預約");
         }
         if (reservation.getFacility().isAvailable() == false) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施無法使用");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施當前無法使用");
+        }
+        if (reservation.getFacility().getCapacity() - resAttendees < reservation.getAttendees()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "時段已額滿");
         }
         reservation.setStatus(ReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
+
+        notificationService.sendReservationSuccess(
+                reservation.getUser().getEmail(),
+                reservation.getFacility().getName(),
+                reservation.getDate().atTime(reservation.getStartTime()));
         return ReservationResponse.from(reservation);
     }
 
@@ -86,7 +103,10 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationResponse> getReservationsByUserId(Integer userId) {
-        return reservationRepository.findByUser_UserId(userId).stream().map(r -> ReservationResponse.from(r)).toList();
+        return reservationRepository.findByUser_UserId(userId).stream()
+                .sorted(Comparator.comparing(Reservation::getStatus))
+                .map(r -> ReservationResponse.from(r))
+                .toList();
     }
 
     @Transactional(readOnly = true)
