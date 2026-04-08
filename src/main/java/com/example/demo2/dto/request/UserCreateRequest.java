@@ -12,7 +12,7 @@ public record UserCreateRequest (
         regexp = "^[a-zA-Z0-9_]+$",
         message = "Username can only contain letters, numbers and underscore"
     )
-    String userName,
+
 
         String userName,
 
