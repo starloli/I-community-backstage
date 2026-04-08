@@ -32,3 +32,4 @@ public interface UserDao extends JpaRepository<User, Integer>{
             """, nativeQuery = true)
         List<Map<String, Object>> findUnitAssetSummary();
 }
+

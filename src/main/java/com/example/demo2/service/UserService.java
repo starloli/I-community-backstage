@@ -1,5 +1,6 @@
 package com.example.demo2.service;
 
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,21 +16,19 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    
+
     private final UserDao userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponse createUser(UserCreateRequest request) {
         User user = new User(
-            request.userName(),
-            passwordEncoder.encode(request.password()),
-            request.fullName(),
-            request.email(),
-            request.phone(),
-            request.unitNumber()
-            
-        );
+                request.userName(),
+                passwordEncoder.encode(request.password()),
+                request.fullName(),
+                request.email(),
+                request.phone(),
+                request.unitNumber());
         userRepository.save(user);
         return UserResponse.from(user);
     }
@@ -45,8 +44,8 @@ public class UserService {
     }
 
     private User getUser(String name) {
-        User user =  userRepository.findByUserName(name)
-            .orElseThrow(() -> new NotFoundException("user not exists"));
+        User user = userRepository.findByUserName(name)
+                .orElseThrow(() -> new NotFoundException("user not exists"));
         return user;
     }
 }

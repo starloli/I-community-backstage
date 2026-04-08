@@ -6,7 +6,6 @@ import com.example.demo2.entity.User;
 
 
 public record UserResponse(
-    
     Integer userId,
     String userName,
     String fullName,
