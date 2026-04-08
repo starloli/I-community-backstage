@@ -3,13 +3,9 @@ package com.example.demo2.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,15 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo2.dto.request.BatchBillRequest;
 import com.example.demo2.dto.request.BillRequset;
 import com.example.demo2.dto.response.BatchResultDto;
-import com.example.demo2.dto.response.BillBatchResponse;
-import com.example.demo2.dto.response.BillResponse;
 import com.example.demo2.dto.response.MonthlyBillDto;
 import com.example.demo2.entity.Bill;
 
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.BillType;
-import com.example.demo2.enums.UserRole;
 import com.example.demo2.enums.paymentMethodEnum;
 import com.example.demo2.repository.BillDao;
 
