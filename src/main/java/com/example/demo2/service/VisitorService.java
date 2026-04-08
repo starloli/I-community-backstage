@@ -1,6 +1,7 @@
 package com.example.demo2.service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.AllVisitorRequest;
 import com.example.demo2.dto.request.VisitorRequest;
@@ -15,7 +17,6 @@ import com.example.demo2.dto.response.VisitorGetUserMassageResponse;
 import com.example.demo2.dto.response.VisitorResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.entity.Visitor;
-import com.example.demo2.exception.GlobalExceptionHandler;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.repository.VisitorDao;
 
@@ -237,6 +238,35 @@ public class VisitorService {
 	            return dto;
 	        }).collect(Collectors.toList());
 	    }
-	}
+    
+    @Transactional(readOnly = true)
+    public long findTodayVisitorNum() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime start = today.atStartOfDay();        // 今天 00:00:00
+        LocalDateTime end = today.plusDays(1).atStartOfDay(); // 明天 00:00:00
+        return visitorDao.countByCheckInTimeBetween(start, end);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AllVisitorRequest> findRecentThree() {
+        List<Visitor> visitors = visitorDao.findTop3ByCheckInTimeBeforeOrderByCheckInTimeDesc(LocalDateTime.now());
+        return visitors.stream().map(visitor -> {
+        	AllVisitorRequest dto = new AllVisitorRequest();
+        	dto.setVisitorId(visitor.getVisitorId());
+        	dto.setVisitorName(visitor.getVisitorName());
+        	dto.setVisitorPhone(visitor.getVisitorPhone());
+        	dto.setEstimatedTime(visitor.getEstimatedTime());
+            dto.setCheckInTime(visitor.getCheckInTime());
+            dto.setCheckOutTime(visitor.getCheckOutTime());
+            dto.setLicensePlate(visitor.getLicensePlate());
+            dto.setPurpose(visitor.getPurpose());
+            dto.setRegisteredBy(visitor.getRegisteredBy());
+            dto.setStatus(visitor.getStatus());
+            if (visitor.getHostUser() != null) {
+                dto.setResidentName(visitor.getHostUser().getFullName());
+                dto.setResidentialAddress(visitor.getHostUser().getUnitNumber());
+            }return dto;}).collect(Collectors.toList());
+    }
+}
 	
 	

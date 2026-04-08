@@ -63,6 +63,12 @@ public class SecurityConfig {
                     "/bills/**"
                 ).permitAll()
 
+//              swagger顯示API
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/**"
+                ).permitAll()
+                
                 .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
                 .requestMatchers("/modify/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .requestMatchers(

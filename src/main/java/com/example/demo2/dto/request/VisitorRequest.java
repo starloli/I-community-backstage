@@ -2,7 +2,6 @@ package com.example.demo2.dto.request;
 
 import java.time.LocalDateTime;
 
-import com.example.demo2.entity.User;
 import com.example.demo2.enums.VisitorStatus;
 
 import lombok.Data;

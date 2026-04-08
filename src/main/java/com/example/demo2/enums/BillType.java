@@ -2,15 +2,15 @@ package com.example.demo2.enums;
 
 import lombok.Getter;
 
-@Getter 
+@Getter
 public enum BillType {
-    
+
     WATER("WATER", "水費分攤"),
     ELECTRICITY("ELECTRICITY", "電費分攤"),
     MANAGEMENTFEE("MANAGEMENTFEE", "管理費"),
-    CAR_PARKINGCLEANINGFEE("CARPARKINGCLEANINGFEE","汽車位清潔費"),
-    LOCOMOTIVE_PARKINGCLEANINGFEE("LOCOMOTIVE_PARKINGCLEANINGFEE","機車位清潔費"),
-  OTHEREXPENSES("OTHEREXPENSES","其他費用");
+    CAR_PARKINGCLEANINGFEE("CARPARKINGCLEANINGFEE", "汽車位清潔費"),
+    LOCOMOTIVE_PARKINGCLEANINGFEE("LOCOMOTIVE_PARKINGCLEANINGFEE", "機車位清潔費"),
+    OTHEREXPENSES("OTHEREXPENSES", "其他費用");
 
     private final String code;
     private final String displayName;

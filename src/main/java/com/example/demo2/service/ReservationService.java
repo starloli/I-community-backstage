@@ -1,0 +1,125 @@
+package com.example.demo2.service;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.example.demo2.dto.request.ReservationRequest;
+import com.example.demo2.dto.request.SearchReservationRequest;
+import com.example.demo2.dto.response.ReservationResponse;
+import com.example.demo2.entity.Reservation;
+import com.example.demo2.enums.ReservationStatus;
+import com.example.demo2.repository.FacilityDao;
+import com.example.demo2.repository.ReservationDao;
+import com.example.demo2.repository.UserDao;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ReservationService {
+
+    private final ReservationDao reservationRepository;
+    private final UserDao userRepository;
+    private final FacilityDao facilityRepository;
+    private final NotificationService notificationService;
+
+    @Transactional
+    public ReservationResponse reserveFacility(ReservationRequest request) {
+        Reservation reservation = new Reservation(
+                this.userRepository.findById(request.userId() != null ? request.userId() : 0).orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到用戶")),
+                this.facilityRepository.findById(request.facilityId() != null ? request.facilityId() : 0).orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到設施")),
+                LocalDate.parse(request.date()),
+                LocalTime.parse(request.startTime()),
+                LocalTime.parse(request.endTime()),
+                request.attendees());
+        Integer resAttendees = this.reservationRepository.sumAttendeesByFacilityIdAndDateAndStartTimeAndStatus(
+                reservation.getFacility().getFacilityId(),
+                reservation.getDate(),
+                reservation.getStartTime(),
+                ReservationStatus.CONFIRMED);
+        if (reservation.getFacility().isReservable() == false) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施當前不可預約");
+        }
+        if (reservation.getFacility().isAvailable() == false) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "該設施當前無法使用");
+        }
+        if (reservation.getFacility().getCapacity() - resAttendees < reservation.getAttendees()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "時段已額滿");
+        }
+        reservation.setStatus(ReservationStatus.CONFIRMED);
+        reservationRepository.save(reservation);
+
+        notificationService.sendReservationSuccess(
+                reservation.getUser().getEmail(),
+                reservation.getFacility().getName(),
+                reservation.getDate().atTime(reservation.getStartTime()));
+        return ReservationResponse.from(reservation);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getReservations(SearchReservationRequest request) {
+        List<ReservationResponse> reservationResponses = new ArrayList<>();
+        if (request.facility() != null && request.user() != null) {
+            List<Reservation> reservations = reservationRepository.findByFacility_FacilityIdAndUser_UserId(
+                    request.facility().getFacilityId(), request.user().getUserId());
+            for (Reservation reservation : reservations) {
+                reservationResponses.add(ReservationResponse.from(reservation));
+            }
+        } else if (request.facility() != null) {
+            List<Reservation> reservations = reservationRepository.findByFacility_FacilityId(
+                    request.facility().getFacilityId());
+            for (Reservation reservation : reservations) {
+                reservationResponses.add(ReservationResponse.from(reservation));
+            }
+        } else {
+            List<Reservation> reservations = reservationRepository.findByUser_UserId(
+                    request.user().getUserId());
+            for (Reservation reservation : reservations) {
+                reservationResponses.add(ReservationResponse.from(reservation));
+            }
+        }
+        return reservationResponses;
+    }
+
+    @Transactional
+    public void cancelReservation(Integer reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId != null ? reservationId : 0)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "找不到預約資料"));
+        if (ReservationStatus.CANCELLED.equals(reservation.getStatus())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "無法再次取消");
+        }
+        reservation.setStatus(ReservationStatus.CANCELLED);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getReservationsByUserId(Integer userId) {
+        return reservationRepository.findByUser_UserId(userId).stream()
+                .sorted(Comparator.comparing(Reservation::getStatus))
+                .map(r -> ReservationResponse.from(r))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getReservationsByFacilityId(Integer facilityId) {
+        return reservationRepository.findByFacility_FacilityId(facilityId).stream()
+                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
+                .map(r -> ReservationResponse.from(r))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getReservationsByFacilityIdAndUserId(Integer facilityId, Integer userId) {
+        return reservationRepository.findByFacility_FacilityIdAndUser_UserId(facilityId, userId).stream()
+                .map(r -> ReservationResponse.from(r)).toList();
+    }
+}

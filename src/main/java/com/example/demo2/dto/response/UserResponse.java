@@ -27,7 +27,6 @@ public record UserResponse(
                 // 💡 映射新欄位
                 user.getSquareFootage(),
                 user.getCarParkingSpace(),
-         
                 user.getMotorParkingSpace()
            
         );

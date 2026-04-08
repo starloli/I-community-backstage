@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
@@ -41,7 +41,7 @@ public class User {
 
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String unitNumber;
 
     @Column(nullable = false)
@@ -67,14 +67,12 @@ public class User {
 
 
     public User(
-        String userName,
-        String passwordHash,
-        String fullName,
-        String email,
-        String phone,
-        String unitNumber
-        
-    ) {
+            String userName,
+            String passwordHash,
+            String fullName,
+            String email,
+            String phone,
+            String unitNumber) {
         this.userName = userName;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
