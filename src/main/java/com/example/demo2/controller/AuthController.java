@@ -25,19 +25,21 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
-
+    
 	private final AuthService authService;
 	private final UserService userService;
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(
-			@Valid @RequestBody LoginRequest request) {
+		@Valid @RequestBody LoginRequest request
+	) {
 		return ResponseEntity.ok(authService.login(request));
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<UserResponse> registerUser(
-			@Valid @RequestBody UserCreateRequest request) {
+		@Valid @RequestBody UserCreateRequest request
+	) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
 	}
 
@@ -45,17 +47,6 @@ public class AuthController {
 	public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 		authService.forgotPassword(request);
 		return ResponseEntity.ok("已傳送連結至信箱");
-	}
-
-	@PostMapping("/regist-facility")
-	public ResponseEntity<FacilityResponse> registFacility(
-			@RequestBody FacilityRegistRequest request) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
-	}
-
-	@GetMapping("/facilities")
-	public ResponseEntity<ArrayList<FacilityResponse>> getFacilities() {
-		return ResponseEntity.ok(facilityService.getFacilities());
 	}
 
 	@PostMapping("/reset-password")
