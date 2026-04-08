@@ -19,6 +19,8 @@ public interface ReservationDao extends JpaRepository<Reservation, Integer> {
 
     List<Reservation> findByFacility_FacilityIdAndUser_UserId(Integer facilityId, Integer userId);
 
+    void deleteByFacility_FacilityId(Integer facilityId);
+
     // 根據時段，取得設備預約人數，不計算已取消的預約
     @Query("SELECT COALESCE(SUM(r.attendees), 0) FROM Reservation r " +
             "WHERE r.facility.facilityId = :facilityId " +
