@@ -3,5 +3,6 @@ package com.example.demo2.enums;
 public enum UserRole {
     ADMIN,
     GUARD,
-    RESIDENT
+    RESIDENT,
+    SUPER_ADMIN
 }
