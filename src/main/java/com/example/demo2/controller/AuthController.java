@@ -44,14 +44,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/forgot-password")
-	public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+	public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 		authService.forgotPassword(request);
-		return ResponseEntity.ok("已傳送連結至信箱");
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/reset-password")
-	public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+	public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
 		authService.resetPassword(request);
-		return ResponseEntity.ok("密碼重設成功");
+		return ResponseEntity.noContent().build();
 	}
 }

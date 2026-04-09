@@ -16,6 +16,7 @@ import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.entity.PasswordResetToken;
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.exception.UnauthorizedException;
 import com.example.demo2.repository.TokenDao;
 import com.example.demo2.repository.UserDao;
@@ -78,7 +79,9 @@ public class AuthService {
 
 			String link = "http://localhost:4200/reset-password?token=" + token;
 			emailService.sendResetEmail(request.getEmail(), link);
-		}
+		} else {
+            throw new NotFoundException("未註冊的信箱");
+        }
 	}
 
     @Transactional
