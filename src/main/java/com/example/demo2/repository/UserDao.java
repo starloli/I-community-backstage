@@ -29,6 +29,7 @@ public interface UserDao extends JpaRepository<User, Integer>{
                 MAX(u.motor_parking_space) as totalMotoSpaces 
             FROM users u 
             WHERE u.is_active = true
+            AND u.role = 'RESIDENT'
             GROUP BY u.unit_number
             """, nativeQuery = true)
         List<Map<String, Object>> findUnitAssetSummary();
