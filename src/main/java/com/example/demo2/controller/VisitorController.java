@@ -129,5 +129,11 @@ public class VisitorController {
 		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
 		return userDao.findDistinctUnitNumbers();
 	}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String,String>> deleteVisitor(@PathVariable("id") Integer id){
+    	visitorService.deleteVisitor(id);
+    	return ResponseEntity.ok(Map.of("message", "刪除成功"));
+    	
+    }
 
 }
