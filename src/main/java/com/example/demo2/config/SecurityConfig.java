@@ -60,7 +60,8 @@ public class SecurityConfig {
                     "/admin/login",
                     "/announ/**",
                     "/statistics/**",
-                    "/bills/**"
+                    "/bills/**",
+                    "/payment/callback"
                 ).permitAll()
 
 //              swagger顯示API

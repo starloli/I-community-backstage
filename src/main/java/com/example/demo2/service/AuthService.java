@@ -76,7 +76,7 @@ public class AuthService {
 		if (userOpt.isPresent()) {
 			String token = createResetToken(userOpt.get());
 
-			String link = "http://localhost:4200/前端網址/reset-password?token=" + token;
+			String link = "http://localhost:4200/reset-password?token=" + token;
 			emailService.sendResetEmail(request.getEmail(), link);
 		}
 	}
