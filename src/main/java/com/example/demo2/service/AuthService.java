@@ -1,23 +1,27 @@
 package com.example.demo2.service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.demo2.dto.request.ForgotPasswordRequest;
+import com.example.demo2.dto.request.EmailVerifyRequest;
+import com.example.demo2.dto.request.EmailRequest;
 import com.example.demo2.dto.request.LoginRequest;
 import com.example.demo2.dto.request.ResetPasswordRequest;
 import com.example.demo2.dto.response.LoginResponse;
+import com.example.demo2.entity.EmailVerifyCode;
 import com.example.demo2.entity.PasswordResetToken;
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
 import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.exception.UnauthorizedException;
+import com.example.demo2.repository.CodeDao;
 import com.example.demo2.repository.TokenDao;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.security.JwtTokenProvider;
@@ -34,6 +38,7 @@ public class AuthService {
 	private final TokenDao tokenDao;
 	private final EmailService emailService;
 	private final UserDao userDao;
+    private final CodeDao codeDao;
 
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
@@ -70,7 +75,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void forgotPassword(ForgotPasswordRequest request) {
+    public void forgotPassword(EmailRequest request) {
 
 		Optional<User> userOpt = userDao.findByEmail(request.getEmail());
 
@@ -85,7 +90,7 @@ public class AuthService {
 	}
 
     @Transactional
-	public void resetPassword(@RequestBody ResetPasswordRequest request) {
+	public void resetPassword(ResetPasswordRequest request) {
 
 		PasswordResetToken token = tokenDao.findByToken(request.getToken())
 				.orElseThrow(() -> new RuntimeException("無效的Token"));
@@ -112,5 +117,33 @@ public class AuthService {
 
         tokenDao.save(prt);
         return token;
-    } 
+    }
+
+    @Transactional
+    public void generateEmailVerifyCode(String email) {
+        Optional<User> userOpt = userDao.findByEmail(email);
+        if(userOpt.isPresent()) { throw new RuntimeException("此信箱已註冊"); }
+        SecureRandom random = new SecureRandom();
+        String code = String.format("%06d", random.nextInt(1000000));
+
+        EmailVerifyCode evc = new EmailVerifyCode();
+        evc.setEmail(email);
+        evc.setCode(code);
+        evc.setExpiryDate(LocalDateTime.now().plusMinutes(15));
+        evc.setUsed(false);
+        codeDao.save(evc);
+        emailService.sendSimpleEmail(email, "帳號註冊認證碼", "六位認證碼: " + code);
+    }
+
+    @Transactional
+    public void verifyEmailCode(EmailVerifyRequest r) {
+        List<EmailVerifyCode> evcs = codeDao.findByEmailAndCodeAndUsed(r.email(), r.code(), false);
+        for (EmailVerifyCode evc : evcs) {
+            if (evc.getExpiryDate().isAfter(LocalDateTime.now())) {
+                evc.setUsed(true);
+                return;
+            }
+        }
+        throw new RuntimeException("認證碼錯誤");
+    }
 }

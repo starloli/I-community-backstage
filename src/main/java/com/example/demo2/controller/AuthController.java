@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo2.dto.request.ForgotPasswordRequest;
+import com.example.demo2.dto.request.EmailRequest;
+import com.example.demo2.dto.request.EmailVerifyRequest;
 import com.example.demo2.dto.request.LoginRequest;
 import com.example.demo2.dto.request.ResetPasswordRequest;
 import com.example.demo2.dto.request.UserCreateRequest;
@@ -43,8 +44,24 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
 	}
 
+    @PostMapping("/email/code")
+    public ResponseEntity<Void> registerEmail(
+        @Valid @RequestBody EmailRequest request
+    ) {
+        authService.generateEmailVerifyCode(request.getEmail());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/email/verify")
+    public ResponseEntity<Void> verifyEmail(
+        @Valid @RequestBody EmailVerifyRequest request
+    ) {
+        authService.verifyEmailCode(request);
+        return ResponseEntity.noContent().build();
+    }
+
 	@PostMapping("/forgot-password")
-	public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+	public ResponseEntity<Void> forgotPassword(@Valid @RequestBody EmailRequest request) {
 		authService.forgotPassword(request);
 		return ResponseEntity.noContent().build();
 	}
