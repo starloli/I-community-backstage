@@ -137,9 +137,9 @@ public class VisitorController {
 	    
 	    //住戶刪除訪客
 	    @DeleteMapping("/delete/{id}")
-	    public ResponseEntity<String> deleteVisitor(@PathVariable("id") Integer id){
+	    public ResponseEntity<Map<String,String>> deleteVisitor(@PathVariable("id") Integer id){
 	    	visitorService.deleteVisitor(id);
-	    	return ResponseEntity.ok("訪客刪除成功");
+	    	return ResponseEntity.ok(Map.of("message", "刪除成功"));
 	    	
 	    }
 	    

@@ -41,7 +41,7 @@ public class User {
 
     private String phone;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String unitNumber;
 
     @Column(nullable = false)

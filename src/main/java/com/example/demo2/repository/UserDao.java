@@ -19,7 +19,8 @@ public interface UserDao extends JpaRepository<User, Integer>{
     List<String> findDistinctUnitNumbers();
     Optional<User> findByEmail(String email);
     List<User> findByRole(UserRole role);
-    
+
+    Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
 
     @Query(value = """
             SELECT 
