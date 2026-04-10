@@ -33,46 +33,44 @@ import lombok.RequiredArgsConstructor;
 public class ModifyResidentController {
 
 	@Autowired
-private ModifyResidentService  modifyResidentService;
-	
+	private ModifyResidentService modifyResidentService;
+
 	@Autowired
 	private UserDao userDao;
-	
-	//超級管理員去修改權限
+
+	// 超級管理員去修改權限
 	@PutMapping("/superadmin")
-	public ResponseEntity<String> superAdminModifyResidentData(@RequestBody ModifyResidentRequset request) {
+	public ResponseEntity<?> superAdminModifyResidentData(@RequestBody ModifyResidentRequset request) {
 		try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User superAdmin = userDao.findByUserName(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
-            
-            // 修正傳入 ID
-            modifyResidentService.superAdminModifyResidentData(request, superAdmin.getUserId());
-            
-            return ResponseEntity.ok("超級管理員：資料與權限更新成功");
-        } catch (RuntimeException e) {
-            // 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User superAdmin = userDao.findByUserName(authentication.getName())
+					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+
+			// 修正傳入 ID
+			modifyResidentService.superAdminModifyResidentData(request, superAdmin.getUserId());
+
+			return ResponseEntity.ok(Map.of("message", "超級管理員：資料與權限更新成功"));
+		} catch (RuntimeException e) {
+			// 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+
 	}
-	
-	
-	//普通管理員修改用戶資料
+
+	// 普通管理員修改用戶資料
 	@PutMapping("/admin")
-	public ResponseEntity<String> adminModifyResidentData(@RequestBody ModifyResidentRequset request ){
+	public ResponseEntity<?> adminModifyResidentData(@RequestBody ModifyResidentRequset request) {
 		try {
-			
-	            modifyResidentService.modifyResidentData(request);
-	            return ResponseEntity.ok("普通管理員：資料與權限更新成功");
-		} catch(RuntimeException e) {
-		
-			  return ResponseEntity.badRequest().body(e.getMessage());
+			modifyResidentService.modifyResidentData(request);
+			return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
+		} catch (RuntimeException e) {
+
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+
 	}
-	
-}
-	
-	//住戶自己修改資料
+
+	// 住戶自己修改資料
 	@PutMapping("/myself")
 	public ResponseEntity<Map<String, String>> myself(@Valid @RequestBody ResidentMyselfModifyRequest request){
 		try {
@@ -98,4 +96,16 @@ private ModifyResidentService  modifyResidentService;
 		return ResponseEntity.ok(responses);
 	}
 	
+	public ResponseEntity<?> myself(@RequestBody ResidentMyselfModifyRequest request) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User user = userDao.findByUserName(authentication.getName())
+					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+			modifyResidentService.residentModifyOwnData(request, user.getUserId());
+			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
 }

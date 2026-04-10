@@ -9,25 +9,25 @@ public record UserResponse(
     Integer userId,
 
     String fullName,
+    String phone,
     String email,
     String unitNumber,
     BigDecimal squareFootage,
     Integer carParkingSpace,
-
-    Integer motorParkingSpace
-
+    Integer motorParkingSpace,
+    boolean isActive
 ) {
     public static UserResponse from(User user) {
     	return new UserResponse(
                 user.getUserId(),
                 user.getFullName(),
+                user.getPhone(),
                 user.getEmail(),
                 user.getUnitNumber(),
-                // 💡 映射新欄位
                 user.getSquareFootage(),
                 user.getCarParkingSpace(),
-                user.getMotorParkingSpace()
-           
+                user.getMotorParkingSpace(),
+                user.getIs_active()
         );
     }
 }
