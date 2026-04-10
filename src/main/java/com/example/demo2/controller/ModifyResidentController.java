@@ -1,10 +1,14 @@
 package com.example.demo2.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.ModifyResidentRequset;
 import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
+import com.example.demo2.dto.response.ModifyResidentResponse;
+import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.ModifyResidentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -67,16 +74,28 @@ private ModifyResidentService  modifyResidentService;
 	
 	//住戶自己修改資料
 	@PutMapping("/myself")
-	public ResponseEntity<String> myself(@RequestBody ResidentMyselfModifyRequest request){
+	public ResponseEntity<Map<String, String>> myself(@Valid @RequestBody ResidentMyselfModifyRequest request){
 		try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User user = userDao.findByUserName(authentication.getName())
                     .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
             
             modifyResidentService.residentModifyOwnData(request,user.getUserId());
-		return  ResponseEntity.ok("個人基本信息修改成功");
+            return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
 	}catch(RuntimeException e) {
-		  return ResponseEntity.badRequest().body(e.getMessage());
+		return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
 	}}
+	
+	
+	
+	//獲取全部人的資料
+	@GetMapping("/getAllData")
+	public ResponseEntity<List<ModifyResidentResponse>>  getAllData(){
+		List<User> users = userDao.findAll();
+		List<ModifyResidentResponse> responses = users.stream()
+	            .map(ModifyResidentResponse::from) // 呼叫你 Record 裡的 static from 方法
+	            .toList();
+		return ResponseEntity.ok(responses);
+	}
 	
 }

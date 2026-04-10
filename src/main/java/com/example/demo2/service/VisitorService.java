@@ -267,6 +267,15 @@ public class VisitorService {
                 dto.setResidentialAddress(visitor.getHostUser().getUnitNumber());
             }return dto;}).collect(Collectors.toList());
     }
+    
+    
+    //住戶刪除訪客
+    @Transactional
+    public void deleteVisitor(int id) {
+   Visitor visitor=visitorDao.findById(id) .orElseThrow(()->new RuntimeException("找不到該id"));
+   
+       visitorDao.delete(visitor);
+       
+    }
 }
-	
 	
