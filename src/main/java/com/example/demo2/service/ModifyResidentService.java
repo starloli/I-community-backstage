@@ -28,19 +28,20 @@ public class ModifyResidentService {
 				.orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + request.getUserId()));
 
 		// 普通管理員不能動到管理層
-		if (targetUser.getRole() == UserRole.ADMIN || targetUser.getRole() == UserRole.SUPER_ADMIN) {
+		if ((targetUser.getRole() == UserRole.ADMIN || targetUser.getRole() == UserRole.SUPER_ADMIN)
+				&& request.getUserId() != targetUser.getUserId()) {
 			throw new RuntimeException("權限不足：普通管理員無法修改管理員等級的帳號");
 		}
+
 		if (request.getRole() == UserRole.ADMIN || request.getRole() == UserRole.SUPER_ADMIN) {
-	        throw new RuntimeException("權限不足：您無法將住戶提升為管理員");
-	    }
-		
+			throw new RuntimeException("權限不足：您無法將住戶提升為管理員");
+		}
+
 		if (targetUser.getIs_active() != request.getIs_active()) {
-	        throw new RuntimeException("權限不足：普通管理員無法啟用或停用帳號");
-	    }
-		
+			throw new RuntimeException("權限不足：普通管理員無法啟用或停用帳號");
+		}
+
 		// 執行行政與資產資料更新 (不包含 Role 和 isActive)
-		
 		updateGeneralInfoAndAssets(targetUser, request);
 	}
 
@@ -111,27 +112,21 @@ public class ModifyResidentService {
 			user.setCarParkingSpace(request.getCarParkingSpace());
 			user.setMotorParkingSpace(request.getMotorParkingSpace());
 			if (!user.getUserId().equals(targetUser.getUserId())) {
-	            user.setUnitNumber(newUnit);
-	        }
+				user.setUnitNumber(newUnit);
+			}
 		}
-		
+
 		userDao.saveAll(members);
 	}
-	
-	
-	
-	//使用者自己修改自己的資料
-	public void residentModifyOwnData(ResidentMyselfModifyRequest request,Integer userId) {
-		User user=userDao.findById(userId).orElseThrow(()
-				-> new RuntimeException("找不到該住戶，ID: " + userId));
-	
-	
+
+	// 使用者自己修改自己的資料
+	public void residentModifyOwnData(ResidentMyselfModifyRequest request, Integer userId) {
+		User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
+
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		User savedUser = userDao.save(user);
-		
-		
+
 	}
-	
-	
+
 }

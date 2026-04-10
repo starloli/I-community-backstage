@@ -72,7 +72,6 @@ public class ModifyResidentController {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			User user = userDao.findByUserName(authentication.getName())
 					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
-
 			modifyResidentService.residentModifyOwnData(request, user.getUserId());
 			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
 		} catch (RuntimeException e) {
