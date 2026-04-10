@@ -128,5 +128,14 @@ public class ModifyResidentService {
 		User savedUser = userDao.save(user);
 
 	}
+	// 管理者自己修改自己的資料
+	public void adminModifyOwnData(ResidentMyselfModifyRequest request, Integer userId) {
+		User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
+
+		user.setEmail(request.getEmail());
+		user.setPhone(request.getPhone());
+		User savedUser = userDao.save(user);
+
+	}
 
 }

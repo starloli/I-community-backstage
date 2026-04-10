@@ -35,105 +35,98 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/visitor")
 @CrossOrigin(origins = "http://localhost:4200")
 public class VisitorController {
-	  @Autowired
-	    private VisitorService visitorService;
-	
-		@Autowired
-	    private VisitorDao visitorDao;
-	
-	    @Autowired
-	    private UserDao userDao;
-	  
-	 @PostMapping("/saveVisitor")
-	public ResponseEntity<VisitorResponse> saveVistor( @RequestBody VisitorRequest visitorRequest){
-	
-		 VisitorResponse response = visitorService.saveVisitor(visitorRequest);	
-		  return ResponseEntity.ok(response);
-		
+	@Autowired
+	private VisitorService visitorService;
+
+	@Autowired
+	private VisitorDao visitorDao;
+
+	@Autowired
+	private UserDao userDao;
+
+	@PostMapping("/saveVisitor")
+	public ResponseEntity<VisitorResponse> saveVistor(@RequestBody VisitorRequest visitorRequest) {
+
+		VisitorResponse response = visitorService.saveVisitor(visitorRequest);
+		return ResponseEntity.ok(response);
+
 	}
-	 //住戶端新增訪客 多了預約時間
-	 @PostMapping("/user/save")
-	 public ResponseEntity<VisitorResponse> saveByToken(@RequestBody VisitorRequest request, Authentication auth) {
 
-	     return ResponseEntity.ok(visitorService.saveVisitorForUser(request, auth.getName()));
-	 }
-	 
-	 
-	 //得到全部訪客   多了預約時間
-	 @GetMapping("/getVisitor")
-	 public ResponseEntity<List<AllVisitorRequest>> getAllVisitors() {
-	        List<AllVisitorRequest> list = visitorService.getAllVisitors();
-	        return ResponseEntity.ok(list);
-	    }
-	
+	// 住戶端新增訪客 多了預約時間
+	@PostMapping("/user/save")
+	public ResponseEntity<VisitorResponse> saveByToken(@RequestBody VisitorRequest request, Authentication auth) {
 
+		return ResponseEntity.ok(visitorService.saveVisitorForUser(request, auth.getName()));
+	}
 
-	 @PutMapping("/modifyVisitor/{id}")
-	 public ResponseEntity<String> modifyVisitor(
-	     @PathVariable("id") Integer id,  
-	     @RequestBody VisitorRequest visitorRequest
-	 ) {
-	     visitorService.updateVisitor(id, visitorRequest);
-	     return ResponseEntity.ok("訪客資料已更新成功");
-	 }
-	 //簽退 
-	 @PutMapping("/checkOut/{id}") 
-	 public ResponseEntity<Map<String, String>> checkOut(@PathVariable("id") Integer id) {
-	     Visitor visitor = visitorDao.findById(id)
-	             .orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
-	             
-	   
-	     visitor.setCheckOutTime(LocalDateTime.now());
-	     visitor.setStatus(VisitorStatus.LEFT); 
-	     
-	     visitorDao.save(visitor);
-	     return ResponseEntity.ok(Map.of("message", "簽退成功"));
-	 }
-	 
-	 //入内 
-	 @PutMapping("/inside/{id}") 
-	 public ResponseEntity<Map<String, String>> inside(@PathVariable("id") Integer id) {
-	     Visitor visitor = visitorDao.findById(id)
-	             .orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
-	             
-	   
-	     visitor.setCheckInTime(LocalDateTime.now());
-	     visitor.setStatus(VisitorStatus.INSIDE); 
-	     
-	     visitorDao.save(visitor);
-	     return ResponseEntity.ok(Map.of("message", "入内成功"));
-	 }
-	 
-	
-//	 去得到該住戶門牌所有的住戶
-	    @GetMapping("/by-address")
-	    public ResponseEntity<List<VisitorGetUserMassageResponse>> getResidents(@RequestParam("address") String unitNumber) {
-	    	List<User> residents = userDao.findByUnitNumber(unitNumber);
-	        
-	    	List<VisitorGetUserMassageResponse> response = visitorService.getResidentDataByAddress(unitNumber);
-	        
-	        return ResponseEntity.ok(response);
-}
-	    
-//	    得到自己的token
-	    @GetMapping("/my-visitors")
-	    public ResponseEntity<List<AllVisitorRequest>> getMyToken(Authentication authentication){
-	    	String name = authentication.getName(); 
-	        
-	        System.out.println("當前登入者是: " + name);
-	      
-	        // 接下來去 Service 查資料...
-	        return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
-	    }
-	    
-	    
-	    //得到全部住戶的地址
-	    @GetMapping("/allAddresses")
-	    public List<String> getAllUniqueAddresses() {
-	        // 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
-	        return userDao.findDistinctUnitNumbers();
-	    }
-	    
-	    
-	    
+	// 得到全部訪客 多了預約時間
+	@GetMapping("/getVisitor")
+	public ResponseEntity<List<AllVisitorRequest>> getAllVisitors() {
+		List<AllVisitorRequest> list = visitorService.getAllVisitors();
+		return ResponseEntity.ok(list);
+	}
+
+	@PutMapping("/modifyVisitor/{id}")
+	public ResponseEntity<String> modifyVisitor(
+			@PathVariable("id") Integer id,
+			@RequestBody VisitorRequest visitorRequest) {
+		visitorService.updateVisitor(id, visitorRequest);
+		return ResponseEntity.ok("訪客資料已更新成功");
+	}
+
+	// 簽退
+	@PutMapping("/checkOut/{id}")
+	public ResponseEntity<Map<String, String>> checkOut(@PathVariable("id") Integer id) {
+		Visitor visitor = visitorDao.findById(id)
+				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
+
+		visitor.setCheckOutTime(LocalDateTime.now());
+		visitor.setStatus(VisitorStatus.LEFT);
+
+		visitorDao.save(visitor);
+		return ResponseEntity.ok(Map.of("message", "簽退成功"));
+	}
+
+	// 入内
+	@PutMapping("/inside/{id}")
+	public ResponseEntity<Map<String, String>> inside(@PathVariable("id") Integer id) {
+		Visitor visitor = visitorDao.findById(id)
+				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
+
+		visitor.setCheckInTime(LocalDateTime.now());
+		visitor.setStatus(VisitorStatus.INSIDE);
+
+		visitorDao.save(visitor);
+		return ResponseEntity.ok(Map.of("message", "入内成功"));
+	}
+
+	// 去得到該住戶門牌所有的住戶
+	@GetMapping("/by-address")
+	public ResponseEntity<List<VisitorGetUserMassageResponse>> getResidents(
+			@RequestParam("address") String unitNumber) {
+		List<User> residents = userDao.findByUnitNumber(unitNumber);
+
+		List<VisitorGetUserMassageResponse> response = visitorService.getResidentDataByAddress(unitNumber);
+
+		return ResponseEntity.ok(response);
+	}
+
+	// 得到自己的token
+	@GetMapping("/my-visitors")
+	public ResponseEntity<List<AllVisitorRequest>> getMyToken(Authentication authentication) {
+		String name = authentication.getName();
+
+		System.out.println("當前登入者是: " + name);
+
+		// 接下來去 Service 查資料...
+		return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
+	}
+
+	// 得到全部住戶的地址
+	@GetMapping("/allAddresses")
+	public List<String> getAllUniqueAddresses() {
+		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
+		return userDao.findDistinctUnitNumbers();
+	}
+
 }
