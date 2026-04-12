@@ -3,7 +3,6 @@ package com.example.demo2.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
 import com.example.demo2.enums.UserRole;
 
 import jakarta.persistence.Column;
@@ -53,18 +52,14 @@ public class User {
 
     private LocalDateTime created_at;
 
-    //住戶平方數
+    // 住戶平方數
     @Column(precision = 10, scale = 2)
     private BigDecimal squareFootage;
 
-//汽車停車位
-    private Integer carParkingSpace = 0;  // 汽車位編號 (或數量)
-    
-  
+    // 汽車停車位
+    private Integer carParkingSpace = 0; // 汽車位編號 (或數量)
 
     private Integer motorParkingSpace = 0; // 機車位編號
-    
-
 
     public User(
             String userName,

@@ -2,6 +2,7 @@ package com.example.demo2.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo2.dto.request.ModifyResidentRequset;
 import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
 import com.example.demo2.dto.response.ModifyResidentResponse;
-import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.ModifyResidentService;
@@ -79,6 +79,20 @@ public class ModifyResidentController {
 					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
 
 			modifyResidentService.residentModifyOwnData(request, user.getUserId());
+			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+		}
+	}
+
+	// 管理員自己修改資料
+	@PutMapping("/adminMyself")
+	public ResponseEntity<?> adminMyself(@Valid @RequestBody User request) {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			User user = userDao.findByUserName(authentication.getName())
+					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+			modifyResidentService.adminModifyOwnData(request, user.getUserId());
 			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
 		} catch (RuntimeException e) {
 			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
