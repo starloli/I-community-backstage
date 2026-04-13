@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.entity.Bill;
 import com.example.demo2.enums.BillStatus;
+import com.example.demo2.enums.paymentMethodEnum;
 import com.example.demo2.repository.BillDao;
 
 
@@ -49,6 +50,9 @@ public class PaymentController {
             // 3. 更新資料庫狀態為「已支付」
             billDao.findById(billId).ifPresent(bill -> {
                 bill.setStatus(BillStatus.PAID); // 確保你的 Bill Entity 有這個欄位
+                bill.setPaidAtDate(java.time.LocalDateTime.now()); // 記錄付款時間
+                bill.setPaymentMethod(paymentMethodEnum.Online); // 記錄付款方式
+                
                 billDao.save(bill);
             });
             
