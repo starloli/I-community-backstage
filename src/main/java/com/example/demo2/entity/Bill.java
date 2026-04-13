@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.BillType;
+import com.example.demo2.enums.paymentMethodEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,16 +33,21 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer billId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
+    
+    @Column(nullable = false)
+    private String unitNumber;
+
+    @Column(nullable =false)
+    private String title;
+    
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BillType billType;
 
     @Column(nullable = false)
     private BigDecimal amount;
+    
 
     @Column(nullable = false)
     private LocalDate billingMonth;
@@ -50,12 +57,67 @@ public class Bill {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private BillStatus status;
+    private BillStatus status = BillStatus.UNPAID;
 
-    private LocalDateTime paidAt;
+    private LocalDateTime paidAtDate;
 
-    private String paymentMethod;
+    private paymentMethodEnum paymentMethod;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime pcreatedAt = LocalDateTime.now();
+    @Column(length = 500) // 備註可以長一點
+    private String remark;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private BigDecimal waterFee;        // 水費分攤
+
+    @Column(nullable = false)
+    private BigDecimal electricityFee;  // 電費分攤
+
+    @Column(nullable = false)
+    private BigDecimal managementFee;   // 坪數管理費
+
+    @Column(nullable = false)
+    private BigDecimal carParkingFee;      // 汽車位費總計
+
+    @Column(nullable = false)
+    private BigDecimal locomotiveParkingFee; 
+    
+    @Column(nullable = false)
+    private BigDecimal otherFee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id",nullable = false) // 在資料庫產生 creator_id 外鍵
+    private User creator;
+    
+ 
+
+    // 更新建構子（如果需要手動新增時帶入備註）
+    public Bill(String unitNumber, String title, LocalDate billingMonth, LocalDate dueDate, 
+            BigDecimal water, BigDecimal elec, BigDecimal mgmt, BigDecimal car, BigDecimal otherFee,
+            BigDecimal motor, String remark, User creator) {
+    this.unitNumber = unitNumber;
+    this.title = title;
+    this.billingMonth = billingMonth;
+    this.dueDate = dueDate;
+    this.remark = remark;
+    this.creator = creator;
+    this.otherFee=otherFee;
+    // 賦值細項
+    this.waterFee = water;
+    this.electricityFee = elec;
+    this.managementFee = mgmt;
+    this.carParkingFee = car;
+    this.locomotiveParkingFee = motor;
+  
+    
+    // 重要：這筆帳單的性質是綜合管理費
+    this.billType = BillType.MANAGEMENTFEE; 
+    
+    // 自動加總存入 amount 欄位
+    this.amount = water.add(elec).add(mgmt).add(car).add(motor);
+    
+    this.status = BillStatus.UNPAID;
+    this.pcreatedAt = LocalDateTime.now();
+    }
 }

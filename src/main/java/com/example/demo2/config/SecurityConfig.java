@@ -59,7 +59,9 @@ public class SecurityConfig {
                     "/auth/**",
                     "/admin/login",
                     "/announ/**",
-                    "/statistics/**"
+                    "/statistics/**",
+                    "/bills/**",
+                    "/payment/callback"
                 ).permitAll()
 
 //              swagger顯示API
@@ -68,6 +70,8 @@ public class SecurityConfig {
                     "/v3/**"
                 ).permitAll()
                 
+                .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
+                .requestMatchers("/modify/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 .requestMatchers(
                     "/admin/**"
                 ).hasRole("ADMIN")
@@ -78,7 +82,9 @@ public class SecurityConfig {
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
-            );
+            )
+            
+            ;
 
         return http.build();
     }
@@ -101,4 +107,6 @@ public class SecurityConfig {
 
         return source;
     }
+    
+    
 }
