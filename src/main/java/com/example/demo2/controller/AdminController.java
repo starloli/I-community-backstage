@@ -25,14 +25,18 @@ import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.dto.response.RepairResponse;
+import com.example.demo2.dto.response.UserResponse;
+import com.example.demo2.entity.User;
 import com.example.demo2.service.AnnouncementService;
 import com.example.demo2.service.AuthService;
 import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.PackageService;
 import com.example.demo2.service.RepairRequestService;
+import com.example.demo2.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -45,6 +49,8 @@ public class AdminController {
         private final PackageService packageService;
         private final RepairRequestService repairRequestService;
         private final FacilityService facilityService;
+        private final UserService userService;
+
 
         @PostMapping("/login")
         public ResponseEntity<LoginResponse> login(
@@ -75,10 +81,10 @@ public class AdminController {
                 return ResponseEntity.noContent().build();
         }
 
-    @GetMapping("/package")
-    public ResponseEntity<List<PackageResponse>> getAll() {
-        return ResponseEntity.ok(packageService.searchAll());
-    }
+        @GetMapping("/package")
+        public ResponseEntity<List<PackageResponse>> getAll() {
+                return ResponseEntity.ok(packageService.searchAll());
+        }
 
         @PostMapping("/package")
         public ResponseEntity<PackageResponse> postPackage(
@@ -140,4 +146,10 @@ public class AdminController {
                 facilityService.deleteFacility(facilityId);
                 return ResponseEntity.noContent().build();
         }
+
+        @GetMapping("/get-all-residents-users")
+        public ResponseEntity<List<UserResponse>> getAllResidentUsers() {
+            return ResponseEntity.ok(userService.getAllResidentUsers());
+        }
+        
 }
