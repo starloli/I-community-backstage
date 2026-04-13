@@ -127,6 +127,7 @@ public class ModifyResidentService {
 		user.setPhone(request.getPhone());
 		userDao.save(user);
 	}
+
 	// 管理者自己修改自己的資料
 	public void adminModifyOwnData(User request, Integer userId) {
 		User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
@@ -135,7 +136,7 @@ public class ModifyResidentService {
 		user.setPhone(request.getPhone());
 		user.setFullName(request.getFullName());
 		user.setUnitNumber(request.getUnitNumber());
-		
+
 		userDao.save(user);
 	}
 

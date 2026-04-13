@@ -2,7 +2,6 @@ package com.example.demo2.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,15 +58,15 @@ public class ModifyResidentController {
 
 	// 普通管理員修改用戶資料
 	@PutMapping("/admin")
-	public ResponseEntity<?> adminModifyResidentData(@RequestBody ModifyResidentRequset request) {
+	public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
 		try {
+			System.out.println(request.toString());
 			modifyResidentService.modifyResidentData(request);
 			return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
 		} catch (RuntimeException e) {
 
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-
 	}
 
 	// 住戶自己修改資料

@@ -26,7 +26,6 @@ import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.dto.response.RepairResponse;
 import com.example.demo2.dto.response.UserResponse;
-import com.example.demo2.entity.User;
 import com.example.demo2.service.AnnouncementService;
 import com.example.demo2.service.AuthService;
 import com.example.demo2.service.FacilityService;

@@ -15,7 +15,7 @@ public record UserResponse(
     BigDecimal squareFootage,
     Integer carParkingSpace,
     Integer motorParkingSpace,
-    boolean isActive
+    boolean is_active
 ) {
     public static UserResponse from(User user) {
     	return new UserResponse(

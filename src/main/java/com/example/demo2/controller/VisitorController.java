@@ -74,7 +74,6 @@ public class VisitorController {
 
 		System.out.println("當前登入者是: " + name);
 
-		// 接下來去 Service 查資料...
 		return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
 	}
 
