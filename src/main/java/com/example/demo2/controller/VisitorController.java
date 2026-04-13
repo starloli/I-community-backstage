@@ -67,6 +67,17 @@ public class VisitorController {
 		return ResponseEntity.ok(list);
 	}
 
+	// 得到自己的token
+	@GetMapping("/my-visitors")
+	public ResponseEntity<List<AllVisitorRequest>> getMyToken(Authentication authentication) {
+		String name = authentication.getName();
+
+		System.out.println("當前登入者是: " + name);
+
+		// 接下來去 Service 查資料...
+		return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
+	}
+
 	@PutMapping("/modifyVisitor/{id}")
 	public ResponseEntity<String> modifyVisitor(
 			@PathVariable("id") Integer id,
@@ -112,23 +123,14 @@ public class VisitorController {
 		return ResponseEntity.ok(response);
 	}
 
-	// 得到自己的token
-	@GetMapping("/my-visitors")
-	public ResponseEntity<List<AllVisitorRequest>> getMyToken(Authentication authentication) {
-		String name = authentication.getName();
-
-		System.out.println("當前登入者是: " + name);
-
-		// 接下來去 Service 查資料...
-		return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
-	}
-
 	// 得到全部住戶的地址
 	@GetMapping("/allAddresses")
 	public List<String> getAllUniqueAddresses() {
 		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
 		return userDao.findDistinctUnitNumbers();
 	}
+
+	// 住戶刪除訪客
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Map<String,String>> deleteVisitor(@PathVariable("id") Integer id){
     	visitorService.deleteVisitor(id);

@@ -1,5 +1,6 @@
 package com.example.demo2.service;
 
+import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
+import com.example.demo2.enums.UserRole;
 import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.repository.UserDao;
 
@@ -52,6 +54,14 @@ public class UserService {
         return userRepository.count();
     }
 
+    @Transactional(readOnly = true)
+    public List<UserResponse> getAllResidentUsers() {
+        List<UserResponse> users = userRepository.findByIsActiveAndRole(true, UserRole.RESIDENT).stream()
+                .map(UserResponse::from).toList();
+        return users;
+    }
+
+    @Transactional(readOnly = true)
     private User getUser(String name) {
         User user = userRepository.findByUserName(name)
                 .orElseThrow(() -> new NotFoundException("user not exists"));

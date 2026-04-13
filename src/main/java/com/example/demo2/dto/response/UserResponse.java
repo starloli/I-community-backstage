@@ -7,7 +7,7 @@ import com.example.demo2.entity.User;
 
 public record UserResponse(
     Integer userId,
-
+    String userName,
     String fullName,
     String phone,
     String email,
@@ -20,6 +20,7 @@ public record UserResponse(
     public static UserResponse from(User user) {
     	return new UserResponse(
                 user.getUserId(),
+                user.getUserName(),
                 user.getFullName(),
                 user.getPhone(),
                 user.getEmail(),
