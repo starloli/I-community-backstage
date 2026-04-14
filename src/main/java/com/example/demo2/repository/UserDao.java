@@ -27,6 +27,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
     List<User> findByRole(UserRole role);
 
     Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
+    
     @Query("SELECT u FROM User u WHERE u.is_active = :isActive " +
             "And u.role = :role")
     List<User> findByIsActiveAndRole(@Param("isActive") boolean isActive, @Param("role") UserRole role);
