@@ -1,5 +1,6 @@
 package com.example.demo2.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -33,89 +34,91 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "http://localhost:4200")
 public class ModifyResidentController {
 
-	@Autowired
-	private ModifyResidentService modifyResidentService;
+  @Autowired
+  private ModifyResidentService modifyResidentService;
 
-	@Autowired
-	private UserDao userDao;
+  @Autowired
+  private UserDao userDao;
 
-	// 超級管理員去修改權限
-	@PutMapping("/superadmin")
-	public ResponseEntity<?> superAdminModifyResidentData(@RequestBody ModifyResidentRequset request) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			User superAdmin = userDao.findByUserName(authentication.getName())
-					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+  // 超級管理員去修改權限
+  @PutMapping("/superadmin")
+  public ResponseEntity<?> superAdminModifyResidentData(@RequestBody ModifyResidentRequset request) {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      User superAdmin = userDao.findByUserName(authentication.getName())
+          .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
 
-			// 修正傳入 ID
-			modifyResidentService.superAdminModifyResidentData(request, superAdmin.getUserId());
+      // 修正傳入 ID
+      modifyResidentService.superAdminModifyResidentData(request, superAdmin.getUserId());
 
-			return ResponseEntity.ok(Map.of("message", "超級管理員：資料與權限更新成功"));
-		} catch (RuntimeException e) {
-			// 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+      return ResponseEntity.ok(Map.of("message", "超級管理員：資料與權限更新成功"));
+    } catch (RuntimeException e) {
+      // 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
 
-	}
+  }
 
-	// 普通管理員修改用戶資料
-	@PutMapping("/admin")
-	public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
-		try {
-			System.out.println(request.toString());
-			modifyResidentService.modifyResidentData(request);
-			return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
-		} catch (RuntimeException e) {
+  // 普通管理員修改用戶資料
+  @PutMapping("/admin")
+  public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
+    try {
+      System.out.println(request.toString());
+      modifyResidentService.modifyResidentData(request);
+      return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
+    } catch (RuntimeException e) {
 
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
+  }
 
-	// 住戶自己修改資料
-	@PutMapping("/myself")
-	public ResponseEntity<Map<String, String>> myself(@Valid @RequestBody ResidentMyselfModifyRequest request) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			User user = userDao.findByUserName(authentication.getName())
-					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+  // 住戶自己修改資料
+  @PutMapping("/myself")
+  public ResponseEntity<Map<String, String>> myself(@Valid @RequestBody ResidentMyselfModifyRequest request) {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      User user = userDao.findByUserName(authentication.getName())
+          .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
 
-			modifyResidentService.residentModifyOwnData(request, user.getUserId());
-			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-		}
-	}
+      modifyResidentService.residentModifyOwnData(request, user.getUserId());
+      return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    }
+  }
 
-	// 管理員自己修改資料
-	@PutMapping("/adminMyself")
-	public ResponseEntity<?> adminMyself(@Valid @RequestBody User request) {
-		try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			User user = userDao.findByUserName(authentication.getName())
-					.orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
-			modifyResidentService.adminModifyOwnData(request, user.getUserId());
-			return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
-		} catch (RuntimeException e) {
-			return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-		}
-	}
+  // 管理員自己修改資料
+  @PutMapping("/adminMyself")
+  public ResponseEntity<?> adminMyself(@Valid @RequestBody User request) {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      User user = userDao.findByUserName(authentication.getName())
+          .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+      modifyResidentService.adminModifyOwnData(request, user.getUserId());
+      return ResponseEntity.ok(Map.of("message", "個人基本信息修改成功"));
+    } catch (RuntimeException e) {
+      return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+    }
+  }
 
-	// 獲取全部人的資料
-	@GetMapping("/getAllData")
-	public ResponseEntity<List<ModifyResidentResponse>> getAllData() {
-		List<User> users = userDao.findAll();
-		List<ModifyResidentResponse> responses = users.stream()
-				.map(ModifyResidentResponse::from) // 呼叫你 Record 裡的 static from 方法
-				.toList();
-		return ResponseEntity.ok(responses);
-	}
+  // 獲取全部人的資料
+  @GetMapping("/getAllData")
+  public ResponseEntity<List<ModifyResidentResponse>> getAllData() {
+    List<User> users = userDao.findAll();
+    List<ModifyResidentResponse> responses = users.stream()
+        .map(ModifyResidentResponse::from) // 呼叫你 Record 裡的 static from 方法
+        .toList();
+    return ResponseEntity.ok(responses);
+  }
 
-	@GetMapping("/getUnqualifiedUser")
-	public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
-		List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
-				.map(UserResponse::from)
-				.toList();
-		return ResponseEntity.ok(response);
-	}
+  @GetMapping("/getUnqualifiedUser")
+  public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
+    List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
+        .map(UserResponse::from)
+        .toList();
+    response.addAll(userDao.findBySquareFootageAndRole(new BigDecimal(0), UserRole.RESIDENT).stream()
+        .map(UserResponse::from).toList());
+    return ResponseEntity.ok(response);
+  }
 
 }
