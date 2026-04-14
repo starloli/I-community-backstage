@@ -1,6 +1,5 @@
 package com.example.demo2.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -113,11 +112,9 @@ public class ModifyResidentController {
 
   @GetMapping("/getUnqualifiedUser")
   public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
-    List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
+    List<UserResponse> response = userDao.findUnqualifiedResidents(UserRole.RESIDENT).stream()
         .map(UserResponse::from)
         .toList();
-    response.addAll(userDao.findBySquareFootageAndRole(new BigDecimal(0), UserRole.RESIDENT).stream()
-        .map(UserResponse::from).toList());
     return ResponseEntity.ok(response);
   }
 
