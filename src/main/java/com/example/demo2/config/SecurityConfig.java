@@ -25,11 +25,10 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig( 
-        JwtAccessDeniedHandler jwtAccessDeniedHandler, 
-        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, 
-        JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
+    public SecurityConfig(
+            JwtAccessDeniedHandler jwtAccessDeniedHandler,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -40,51 +39,45 @@ public class SecurityConfig {
 
         http
 
-            .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
 
-            .cors(cors -> {})   // ⭐ 開啟 CORS
+                .cors(cors -> {
+                }) // ⭐ 開啟 CORS
 
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-            )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
 
-            .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-                .requestMatchers(
-                    "/auth/**",
-                    "/admin/login",
-                    "/announ/**",
-                    "/statistics/**",
-                    "/bills/**",
-                    "/payment/callback"
-                ).permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/admin/login",
+                                "/announ/**",
+                                "/statistics/**",
+                                "/bills/**",
+                                "/payment/callback")
+                        .permitAll()
 
-//              swagger顯示API
-                .requestMatchers(
-                    "/swagger-ui/**",
-                    "/v3/**"
-                ).permitAll()
-                
-                .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
-                .requestMatchers("/modify/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                .requestMatchers(
-                    "/admin/**"
-                ).hasRole("ADMIN")
+                        // swagger顯示API
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/**")
+                        .permitAll()
 
-                .anyRequest().authenticated()
-            )
-            
-            .addFilterBefore(
-                jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class
-            )
-            
-            ;
+                        .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/modify/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers(
+                                "/admin/**")
+                        .hasRole("ADMIN")
+
+                        .anyRequest().authenticated())
+
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -96,17 +89,15 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-            new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration("/**", config);
 
         return source;
     }
-    
-    
+
 }

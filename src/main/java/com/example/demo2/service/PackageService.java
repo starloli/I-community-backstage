@@ -19,21 +19,20 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PackageService {
-    
+
     private final PackageDao packageDao;
     private final UserDao userDao;
 
     @Transactional
     public PackageResponse createPackage(PackageRequest r) {
         Package p = new Package(
-            r.recipientName(),
-            r.phoneNumber(),
-            r.unitNumber(),
-            r.trackingNumber(),
-            r.courier(),
-            r.arrivedAt(),
-            r.notes()
-        );
+                r.recipientName(),
+                r.phoneNumber(),
+                r.unitNumber(),
+                r.trackingNumber(),
+                r.courier(),
+                r.arrivedAt(),
+                r.notes());
         packageDao.save(p);
         return PackageResponse.from(p);
     }
@@ -54,15 +53,15 @@ public class PackageService {
 
     @Transactional
     public PackageResponse notifyById(Integer id) {
-        Package p = packageDao.findById(id)
+        Package p = packageDao.findById(id != null ? id : 0)
                 .orElseThrow(() -> new NotFoundException("找不到包裹"));
         p.setNotified(true);
         return PackageResponse.from(p);
     }
 
     @Transactional
-    public PackageResponse pickupById (Integer id, String pickupAt) {
-        Package p = packageDao.findById(id)
+    public PackageResponse pickupById(Integer id, String pickupAt) {
+        Package p = packageDao.findById(id != null ? id : 0)
                 .orElseThrow(() -> new NotFoundException("找不到包裹"));
         p.setStatus(PackageStatus.PICKED_UP);
         p.setPickupAt(pickupAt);

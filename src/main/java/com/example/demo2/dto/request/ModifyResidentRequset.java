@@ -23,6 +23,7 @@ public class ModifyResidentRequset {
 	@NotBlank(message = "房號不可為空")
 	private String unitNumber;
 	private UserRole role;
+	@NotNull(message = "是否啟用不可為空")
 	private Boolean is_active;
 	@DecimalMin(value = "0.0", message = "坪數不能為負")
 	private BigDecimal squareFootage;

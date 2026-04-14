@@ -22,7 +22,6 @@ import com.example.demo2.dto.request.AllVisitorRequest;
 import com.example.demo2.dto.request.VisitorRequest;
 import com.example.demo2.dto.response.VisitorGetUserMassageResponse;
 import com.example.demo2.dto.response.VisitorResponse;
-import com.example.demo2.entity.User;
 import com.example.demo2.entity.Visitor;
 import com.example.demo2.enums.VisitorStatus;
 import com.example.demo2.repository.UserDao;
@@ -74,15 +73,7 @@ public class VisitorController {
 
 		System.out.println("當前登入者是: " + name);
 
-		// 接下來去 Service 查資料...
 		return ResponseEntity.ok(visitorService.getVisitorsByUserName(name));
-	}
-
-	// 得到全部住戶的地址
-	@GetMapping("/allAddresses")
-	public List<String> getAllUniqueAddresses() {
-		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
-		return userDao.findDistinctUnitNumbers();
 	}
 
 	@PutMapping("/modifyVisitor/{id}")
@@ -96,7 +87,7 @@ public class VisitorController {
 	// 簽退
 	@PutMapping("/checkOut/{id}")
 	public ResponseEntity<Map<String, String>> checkOut(@PathVariable("id") Integer id) {
-		Visitor visitor = visitorDao.findById(id)
+		Visitor visitor = visitorDao.findById(id != null ? id : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
 
 		visitor.setCheckOutTime(LocalDateTime.now());
@@ -109,13 +100,13 @@ public class VisitorController {
 	// 入内
 	@PutMapping("/inside/{id}")
 	public ResponseEntity<Map<String, String>> inside(@PathVariable("id") Integer id) {
-		Visitor visitor = visitorDao.findById(id)
+		Visitor visitor = visitorDao.findById(id != null ? id : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
 
 		visitor.setCheckInTime(LocalDateTime.now());
 		visitor.setStatus(VisitorStatus.INSIDE);
-
 		visitorDao.save(visitor);
+
 		return ResponseEntity.ok(Map.of("message", "入内成功"));
 	}
 
@@ -123,19 +114,24 @@ public class VisitorController {
 	@GetMapping("/by-address")
 	public ResponseEntity<List<VisitorGetUserMassageResponse>> getResidents(
 			@RequestParam("address") String unitNumber) {
-		List<User> residents = userDao.findByUnitNumber(unitNumber);
-
 		List<VisitorGetUserMassageResponse> response = visitorService.getResidentDataByAddress(unitNumber);
 
 		return ResponseEntity.ok(response);
 	}
 
-	// 住戶刪除訪客
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Map<String, String>> deleteVisitor(@PathVariable("id") Integer id) {
-		visitorService.deleteVisitor(id);
-		return ResponseEntity.ok(Map.of("message", "訪客刪除成功"));
-
+	// 得到全部住戶的地址
+	@GetMapping("/allAddresses")
+	public List<String> getAllUniqueAddresses() {
+		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
+		return userDao.findDistinctUnitNumbers();
 	}
+
+	// 住戶刪除訪客
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String,String>> deleteVisitor(@PathVariable("id") Integer id){
+    	visitorService.deleteVisitor(id);
+    	return ResponseEntity.ok(Map.of("message", "刪除成功"));
+    	
+    }
 
 }
