@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo2.dto.request.ModifyResidentRequset;
 import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
 import com.example.demo2.dto.response.ModifyResidentResponse;
+import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
+import com.example.demo2.enums.UserRole;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.ModifyResidentService;
 
@@ -107,4 +109,13 @@ public class ModifyResidentController {
 				.toList();
 		return ResponseEntity.ok(responses);
 	}
+
+	@GetMapping("/getUnqualifiedUser")
+	public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
+		List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
+				.map(UserResponse::from)
+				.toList();
+		return ResponseEntity.ok(response);
+	}
+
 }

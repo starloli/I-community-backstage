@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import java.math.BigDecimal;
+
 
 public interface UserDao extends JpaRepository<User, Integer> {
 
@@ -41,4 +43,6 @@ public interface UserDao extends JpaRepository<User, Integer> {
             GROUP BY u.unit_number
             """, nativeQuery = true)
     List<Map<String, Object>> findUnitAssetSummary();
+
+    List<User> findBySquareFootageAndRole(BigDecimal squareFootage, UserRole role);
 }
