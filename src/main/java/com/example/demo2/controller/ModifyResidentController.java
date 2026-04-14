@@ -107,5 +107,4 @@ public class ModifyResidentController {
 				.toList();
 		return ResponseEntity.ok(responses);
 	}
-
 }

@@ -1,10 +1,7 @@
 package com.example.demo2.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo2.dto.request.BatchBillRequest;
 import com.example.demo2.dto.request.BillRequset;
 import com.example.demo2.dto.response.BatchResultDto;
-import com.example.demo2.dto.response.BillBatchResponse;
-import com.example.demo2.dto.response.BillResponse;
 import com.example.demo2.dto.response.MonthlyBillDto;
 import com.example.demo2.dto.response.UserResponse;
-import com.example.demo2.entity.Bill;
 import com.example.demo2.entity.User;
-import com.example.demo2.enums.BillType;
-import com.example.demo2.repository.BillDao;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.BillService;
 
@@ -42,9 +34,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/bills")
 @CrossOrigin(origins = "http://localhost:4200")
 public class BillController {
-
-    @Autowired
-    private BillDao billDao;
 
     @Autowired 
     private BillService billService;

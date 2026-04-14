@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RepairRequestService {
-    
+
     private final RepairRequestDao repairRequestDao;
     private final UserDao userRepository;
 
@@ -31,13 +31,12 @@ public class RepairRequestService {
     public RepairResponse createRepairRequest(String name, RepairRequestDto d) {
         User user = getUser(name);
         RepairRequest request = new RepairRequest(
-            user,
-            d.location(),
-            d.category(),
-            d.description(),
-            d.imageUrl(),
-            d.submittedAt()
-        );
+                user,
+                d.location(),
+                d.category(),
+                d.description(),
+                d.imageUrl(),
+                d.submittedAt());
         repairRequestDao.save(request);
         return RepairResponse.from(request);
     }
@@ -60,7 +59,7 @@ public class RepairRequestService {
 
     @Transactional
     public RepairResponse updateById(Integer id, RepairUpdateRequest u) {
-        RepairRequest request = repairRequestDao.findById(id)
+        RepairRequest request = repairRequestDao.findById(id != null ? id : 0)
                 .orElseThrow(() -> new NotFoundException("找不到報修單"));
         request.setLocation(u.location());
         request.setDescription(u.description());
@@ -73,11 +72,10 @@ public class RepairRequestService {
     @Transactional
     public RepairResponse completeById(Integer id, String name) {
         User user = getUser(name);
-        RepairRequest request = repairRequestDao.findById(id)
+        RepairRequest request = repairRequestDao.findById(id != null ? id : 0)
                 .orElseThrow(() -> new NotFoundException("找不到報修單"));
-        DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("yyyy/M/d")
-                        .withLocale(Locale.TAIWAN);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d")
+                .withLocale(Locale.TAIWAN);
         String result = LocalDate.now().format(formatter);
         request.setResolvedAt(result);
         request.setStatus(RepairStatus.DONE);
@@ -87,12 +85,12 @@ public class RepairRequestService {
 
     @Transactional
     public void deleteById(Integer id) {
-        repairRequestDao.deleteById(id);
+        repairRequestDao.deleteById(id != null ? id : 0);
     }
 
     private User getUser(String name) {
-        User user =  userRepository.findByUserName(name)
-            .orElseThrow(() -> new NotFoundException("user not exists"));
+        User user = userRepository.findByUserName(name)
+                .orElseThrow(() -> new NotFoundException("user not exists"));
         return user;
     }
 }

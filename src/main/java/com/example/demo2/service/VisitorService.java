@@ -40,7 +40,8 @@ public class VisitorService {
         visitor.setCheckOutTime(request.getCheckOutTime());
 
         visitor.setStatus(request.getStatus());
-        String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        // String currentUserName =
+        // SecurityContextHolder.getContext().getAuthentication().getName();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
             visitor.setRegisteredBy(auth.getName()); // 這裡拿到的就是 Token 裡的 sub (lisiAccount)
@@ -123,7 +124,7 @@ public class VisitorService {
 
     public void updateVisitor(Integer id, VisitorRequest request) {
         // 檢查該訪客記錄是否存在
-        Visitor visitor = visitorDao.findById(id)
+        Visitor visitor = visitorDao.findById(id != null ? id : 0)
                 .orElseThrow(() -> new RuntimeException("找不到 ID 為 " + id + " 的訪客記錄"));
 
         visitor.setVisitorName(request.getVisitorName());
@@ -251,6 +252,9 @@ public class VisitorService {
     @Transactional
     public void deleteVisitor(int id) {
         Visitor visitor = visitorDao.findById(id).orElseThrow(() -> new RuntimeException("找不到該id"));
-        visitorDao.delete(visitor);
+        if (visitor != null)
+            visitorDao.delete(visitor);
+        else
+            throw new RuntimeException("找不到該id");
     }
 }

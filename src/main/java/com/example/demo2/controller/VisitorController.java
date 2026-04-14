@@ -22,7 +22,6 @@ import com.example.demo2.dto.request.AllVisitorRequest;
 import com.example.demo2.dto.request.VisitorRequest;
 import com.example.demo2.dto.response.VisitorGetUserMassageResponse;
 import com.example.demo2.dto.response.VisitorResponse;
-import com.example.demo2.entity.User;
 import com.example.demo2.entity.Visitor;
 import com.example.demo2.enums.VisitorStatus;
 import com.example.demo2.repository.UserDao;
@@ -95,7 +94,7 @@ public class VisitorController {
 	// 簽退
 	@PutMapping("/checkOut/{id}")
 	public ResponseEntity<Map<String, String>> checkOut(@PathVariable("id") Integer id) {
-		Visitor visitor = visitorDao.findById(id)
+		Visitor visitor = visitorDao.findById(id != null ? id : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
 
 		visitor.setCheckOutTime(LocalDateTime.now());
@@ -108,13 +107,13 @@ public class VisitorController {
 	// 入内
 	@PutMapping("/inside/{id}")
 	public ResponseEntity<Map<String, String>> inside(@PathVariable("id") Integer id) {
-		Visitor visitor = visitorDao.findById(id)
+		Visitor visitor = visitorDao.findById(id != null ? id : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該筆記錄"));
 
 		visitor.setCheckInTime(LocalDateTime.now());
 		visitor.setStatus(VisitorStatus.INSIDE);
-
 		visitorDao.save(visitor);
+
 		return ResponseEntity.ok(Map.of("message", "入内成功"));
 	}
 
@@ -122,8 +121,6 @@ public class VisitorController {
 	@GetMapping("/by-address")
 	public ResponseEntity<List<VisitorGetUserMassageResponse>> getResidents(
 			@RequestParam("address") String unitNumber) {
-		List<User> residents = userDao.findByUnitNumber(unitNumber);
-
 		List<VisitorGetUserMassageResponse> response = visitorService.getResidentDataByAddress(unitNumber);
 
 		return ResponseEntity.ok(response);
