@@ -110,7 +110,7 @@ public class ModifyResidentController {
     return ResponseEntity.ok(responses);
   }
 
-  @GetMapping("/getUnqualifiedUser")
+  @GetMapping("/getUnqualifiedResidents")
   public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
     List<UserResponse> response = userDao.findUnqualifiedResidents(UserRole.RESIDENT).stream()
         .map(UserResponse::from)
