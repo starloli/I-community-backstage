@@ -42,4 +42,6 @@ public interface UserDao extends JpaRepository<User, Integer> {
             GROUP BY u.unit_number
             """, nativeQuery = true)
     List<Map<String, Object>> findUnitAssetSummary();
+    
+    List<User> findBySquareFootageIsNull();
 }

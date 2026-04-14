@@ -59,7 +59,7 @@ public class ModifyResidentController {
 
 	// 普通管理員修改用戶資料
 	@PutMapping("/admin")
-	public ResponseEntity<?> adminModifyResidentData(@RequestBody ModifyResidentRequset request) {
+	public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
 		try {
 			modifyResidentService.modifyResidentData(request);
 			return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));

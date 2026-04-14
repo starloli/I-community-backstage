@@ -125,4 +125,26 @@ public ResponseEntity<BatchResultDto> sendAllbills(@RequestBody BatchBillRequest
 	return ResponseEntity.ok(list);
 }
 
+
+//得到全部有異常的住戶地址
+@GetMapping("/getAbnormalUnits")
+public ResponseEntity<List<String>> getAbnormalUnits(){
+	List<User> abnormalUnits =userDao.findBySquareFootageIsNull();
+	List<String> abnormalUnitNumbers = abnormalUnits.stream()
+            .map(User::getUnitNumber) // 只取房號
+            .distinct()               // 如果有重複，只留一個
+            .toList();
+	return ResponseEntity.ok(abnormalUnitNumbers);
+}
+
+//管理員查看本月是否已經有賬單了
+@GetMapping("/findByMonth")
+public ResponseEntity<Map<String,String>> findByMonth(@RequestParam("billingMonth") String billingMonth){
+
+	Boolean month=billService.checkBillInThisMonth(billingMonth);
+return month? ResponseEntity.ok(Map.of("message","本月已經有賬單了")):ResponseEntity.ok((Map.of("message","本月還沒有賬單")));
+}
+
+
+
 }

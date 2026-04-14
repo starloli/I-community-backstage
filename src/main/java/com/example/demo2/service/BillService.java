@@ -88,7 +88,7 @@ BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
 
     // 獲取住戶自己的帳單 (一月一筆)
     public List<MonthlyBillDto> getResidentMonthlyBills(String unitNumber) {
-        List<Bill> bills = billDao.findByUnitNumber(unitNumber);
+    	    List<Bill> bills = billDao.findByUnitNumber(unitNumber);
         return bills.stream()
                     .map(MonthlyBillDto::fromEntity)
                     .toList();
@@ -151,7 +151,7 @@ BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
                 // --- 開始從 Map 取值並轉換型別 ---
                 // 坪數 (Square Footage)
                 BigDecimal userPings = new BigDecimal(asset.get("squareFootage").toString());
-                
+          
                 // 汽車位 (SUM 的結果在 Java 通常是 Number 類型)
                 Number carVal = (Number) asset.get("totalCarSpaces");;
                 BigDecimal userCarSpaces = (carVal != null) ? BigDecimal.valueOf(carVal.longValue()) : BigDecimal.ZERO;
@@ -174,11 +174,11 @@ BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
                 // 設定分攤費用
                 bill.setWaterFee(avgWater);
                 bill.setElectricityFee(avgElec);
+           
 
                 // 計算管理費
                 BigDecimal pingPrice = request.getCommonFees().getOrDefault("PING_PRICE", BigDecimal.ZERO);
                 bill.setManagementFee(pingPrice.multiply(userPings).setScale(0, RoundingMode.HALF_UP));
-
                 // 計算汽車位費 (直接用加總後的數量)
                 BigDecimal carPrice = request.getCommonFees().getOrDefault("CAR_SPACE_PRICE", BigDecimal.ZERO);
                 bill.setCarParkingFee(carPrice.multiply(userCarSpaces).setScale(0, RoundingMode.HALF_UP));
@@ -207,5 +207,18 @@ BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
         }
         return new BatchResultDto(successCount, failedUnits);
     }
+    
+    //查找這個月是不是已經有賬單了
+    public Boolean checkBillInThisMonth( String billingMonth) {
+    	  boolean exists = billDao.existsByBillingMonth(
+    		
+    			 LocalDate.parse(billingMonth).withDayOfMonth(1)
+    	        );
+
+    	        if (exists) {
+    	           return true;
+    	        }
+    	        return false;
     }
+        }
 	
