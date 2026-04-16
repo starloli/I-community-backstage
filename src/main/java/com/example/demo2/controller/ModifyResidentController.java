@@ -62,7 +62,6 @@ public class ModifyResidentController {
   @PutMapping("/admin")
   public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
     try {
-      System.out.println(request.toString());
       modifyResidentService.modifyResidentData(request);
       return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
     } catch (RuntimeException e) {
