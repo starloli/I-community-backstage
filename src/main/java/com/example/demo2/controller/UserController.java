@@ -1,5 +1,6 @@
 package com.example.demo2.controller;
 
+import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.PackageService;
 import com.example.demo2.service.RepairRequestService;
 
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.dto.response.RepairResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class UserController {
     private final PackageService packageService;
     private final UserService userService;
     private final RepairRequestService repairRequestService;
+    private final FacilityService facilityService;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(
@@ -50,4 +54,10 @@ public class UserController {
         String name = authentication.getName();
         return ResponseEntity.ok(repairRequestService.searchUserAll(name));
     }
+
+    @GetMapping("/facility")
+    public ResponseEntity<List<FacilityResponse>> getFacilities() {
+        return ResponseEntity.ok(facilityService.getFacilities());
+    }
+    
 }
