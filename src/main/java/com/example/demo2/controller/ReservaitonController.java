@@ -1,6 +1,5 @@
 package com.example.demo2.controller;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo2.dto.request.ConfigRequest;
 import com.example.demo2.dto.request.ReservationRequest;
 import com.example.demo2.dto.response.ReservationResponse;
 import com.example.demo2.service.NotificationService;
@@ -64,7 +64,7 @@ public class ReservaitonController {
     }
 
     @PutMapping("/remindTime")
-    public ResponseEntity<?> remindTime(@RequestBody @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime timecron) {
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", notificationService.updateSchedule(timecron)));
+    public ResponseEntity<?> remindTime(@RequestBody @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) ConfigRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", notificationService.updateSchedule(request.timecron())));
     }
 }
