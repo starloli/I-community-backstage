@@ -146,4 +146,12 @@ public class AuthService {
         }
         throw new RuntimeException("認證碼錯誤");
     }
+    @Transactional
+    public Boolean checkingUserName(String name) {
+    	 Optional<User> userName=userDao.findByUserName(name);
+    	 if(userName.isEmpty()) {
+    		 return false;
+    	 }
+    	 return true;
+    }
 }

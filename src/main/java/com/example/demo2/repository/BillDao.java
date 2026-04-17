@@ -19,4 +19,6 @@ public interface BillDao  extends JpaRepository<Bill, Integer>{
 	
 	
 	boolean existsByUnitNumberAndBillingMonth(String unitNumber, LocalDate billingMonth);
+	
+	boolean existsByBillingMonth(LocalDate billingMonth);
 }

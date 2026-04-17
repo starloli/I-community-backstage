@@ -46,4 +46,6 @@ public interface UserDao extends JpaRepository<User, Integer> {
     List<Map<String, Object>> findUnitAssetSummary();
 
     List<User> findBySquareFootageAndRole(BigDecimal squareFootage, UserRole role);
+    
+    List<User> findBySquareFootageIsNull();
 }
