@@ -116,8 +116,6 @@ public class ModifyResidentController {
     List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
         .map(UserResponse::from)
         .toList();
-    response.addAll(userDao.findBySquareFootageAndRole(new BigDecimal(0), UserRole.RESIDENT).stream()
-        .map(UserResponse::from).toList());
     return ResponseEntity.ok(response);
   }
 
