@@ -2,11 +2,8 @@ package com.example.demo2.dto.request;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import com.example.demo2.enums.BillStatus;
 
 import lombok.Data;
 @Data

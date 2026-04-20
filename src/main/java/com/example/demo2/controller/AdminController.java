@@ -16,20 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.AnnouncementCreateRequest;
-import com.example.demo2.dto.request.FacilityRequest;
 import com.example.demo2.dto.request.LoginRequest;
 import com.example.demo2.dto.request.PackageRequest;
 import com.example.demo2.dto.request.RepairUpdateRequest;
 import com.example.demo2.dto.response.AnnouncementResponse;
-import com.example.demo2.dto.response.FacilityResponse;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.PackageResponse;
 import com.example.demo2.dto.response.RepairResponse;
 import com.example.demo2.dto.response.UserResponse;
-import com.example.demo2.entity.User;
 import com.example.demo2.service.AnnouncementService;
 import com.example.demo2.service.AuthService;
-import com.example.demo2.service.FacilityService;
 import com.example.demo2.service.PackageService;
 import com.example.demo2.service.RepairRequestService;
 import com.example.demo2.service.UserService;
@@ -48,7 +44,6 @@ public class AdminController {
         private final AnnouncementService announcementService;
         private final PackageService packageService;
         private final RepairRequestService repairRequestService;
-        private final FacilityService facilityService;
         private final UserService userService;
 
 
@@ -125,25 +120,6 @@ public class AdminController {
         public ResponseEntity<Void> deleteRepairById(
                         @PathVariable("id") Integer id) {
                 repairRequestService.deleteById(id);
-                return ResponseEntity.noContent().build();
-        }
-
-        @PostMapping("/regist-facility")
-        public ResponseEntity<FacilityResponse> registFacility(
-                        @RequestBody FacilityRequest request) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(facilityService.registFacility(request));
-        }
-
-        @PutMapping("/update-facility/{facilityId}")
-        public ResponseEntity<FacilityResponse> updateFacility(
-                        @PathVariable("facilityId") Integer facilityId, @RequestBody FacilityRequest facilityRequest) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                                .body(facilityService.updateFacility(facilityId, facilityRequest));
-        }
-
-        @DeleteMapping("/delete-facility/{facilityId}")
-        public ResponseEntity<Void> deleteFacility(@PathVariable("facilityId") Integer facilityId) {
-                facilityService.deleteFacility(facilityId);
                 return ResponseEntity.noContent().build();
         }
 

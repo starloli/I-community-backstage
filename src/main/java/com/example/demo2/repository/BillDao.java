@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo2.entity.Announcement;
 import com.example.demo2.entity.Bill;
 import com.example.demo2.enums.BillType;
 
@@ -17,7 +16,6 @@ public interface BillDao  extends JpaRepository<Bill, Integer>{
 	        BillType billType
 	    );
 	List<Bill> findByUnitNumberAndBillingMonth(String unitNumber, LocalDate billingMonth);
-	
 	
 	boolean existsByUnitNumberAndBillingMonth(String unitNumber, LocalDate billingMonth);
 	

@@ -1,6 +1,5 @@
 package com.example.demo2.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class ModifyResidentService {
 	 */
 	@Transactional
 	public void modifyResidentData(ModifyResidentRequset request) {
-		User targetUser = userDao.findById(request.getUserId())
+		User targetUser = userDao.findById(request.getUserId() != null ? request.getUserId() : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + request.getUserId()));
 
 		// 普通管理員不能動到管理層
@@ -50,7 +49,7 @@ public class ModifyResidentService {
 	 */
 	@Transactional
 	public void superAdminModifyResidentData(ModifyResidentRequset request, Integer currentAdminId) {
-		User targetUser = userDao.findById(request.getUserId())
+		User targetUser = userDao.findById(request.getUserId() != null ? request.getUserId() : 0)
 				.orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + request.getUserId()));
 
 		// 🛑 防自殺與超管互鬥判斷
@@ -121,21 +120,24 @@ public class ModifyResidentService {
 
 	// 使用者自己修改自己的資料
 	public void residentModifyOwnData(ResidentMyselfModifyRequest request, Integer userId) {
-		User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
+		User user = userDao.findById(userId != null ? userId : 0)
+				.orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
 
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		userDao.save(user);
 	}
+
 	// 管理者自己修改自己的資料
 	public void adminModifyOwnData(User request, Integer userId) {
-		User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
+		User user = userDao.findById(userId != null ? userId : 0)
+				.orElseThrow(() -> new RuntimeException("找不到該住戶，ID: " + userId));
 
 		user.setEmail(request.getEmail());
 		user.setPhone(request.getPhone());
 		user.setFullName(request.getFullName());
 		user.setUnitNumber(request.getUnitNumber());
-		
+
 		userDao.save(user);
 	}
 

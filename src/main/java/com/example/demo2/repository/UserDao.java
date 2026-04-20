@@ -25,7 +25,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
     List<User> findByRole(UserRole role);
 
     Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
-    
+
     @Query("SELECT u FROM User u WHERE u.is_active = :isActive " +
             "And u.role = :role")
     List<User> findByIsActiveAndRole(@Param("isActive") boolean isActive, @Param("role") UserRole role);
@@ -42,6 +42,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
             GROUP BY u.unit_number
             """, nativeQuery = true)
     List<Map<String, Object>> findUnitAssetSummary();
-    
-    List<User> findBySquareFootageIsNull();
+
+    @Query("SELECT u FROM User u WHERE u.role = :role AND (u.squareFootage IS NULL OR u.squareFootage = 0)")
+    List<User> findUnqualifiedResidents(@Param("role") UserRole role);
 }
