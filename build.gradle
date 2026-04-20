@@ -47,6 +47,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
+	
+	// Google AI Gemini SDK
+    implementation 'com.google.genai:google-genai:1.0.0'
+	
 }
 
 tasks.named('test') {
