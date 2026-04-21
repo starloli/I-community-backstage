@@ -4,6 +4,8 @@ import com.example.demo2.dto.request.PackageRequest;
 import com.example.demo2.service.PackegeGeminiOCRService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ public class PackegeOCRController {@Autowired
     private ObjectMapper objectMapper;
 
     @PostMapping("/scan-package")
-    public PackageRequest scanPackage(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> scanPackage(@RequestBody Map<String, String> payload) {
     	String jsonResponse = ""; 
         
         try {
@@ -39,18 +41,19 @@ public class PackegeOCRController {@Autowired
             PackageRequest aiResult = lenientMapper.readValue(jsonResponse, PackageRequest.class);
 
             String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            return new PackageRequest(
+            PackageRequest finalResult = new PackageRequest(
                 aiResult.recipientName(), aiResult.phoneNumber(), aiResult.unitNumber(),
                 aiResult.trackingNumber(), aiResult.courier(), currentTime, aiResult.notes()
             );
-
+            return ResponseEntity.ok(finalResult);
         } catch (Exception e) {
             // 3. 現在這裡可以正常使用 jsonResponse 了！
             System.err.println("--- 造成報錯的 JSON 內容如下 ---");
             System.err.println(jsonResponse); 
             System.err.println("----------------------------");
             e.printStackTrace();
-            return new PackageRequest("", "", "", "", "", "", "解析失敗: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "辨識失敗: " + e.getMessage()));
         }
     }
 }
