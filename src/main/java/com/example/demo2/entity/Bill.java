@@ -31,8 +31,6 @@ public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer billId;
-
-
     
     @Column(nullable = false)
     private String unitNumber;
@@ -47,7 +45,6 @@ public class Bill {
     @Column(nullable = false)
     private BigDecimal amount;
     
-
     @Column(nullable = false)
     private LocalDate billingMonth;
 

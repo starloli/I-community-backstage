@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
-import java.math.BigDecimal;
-
 
 public interface UserDao extends JpaRepository<User, Integer> {
 
@@ -27,7 +25,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
     List<User> findByRole(UserRole role);
 
     Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
-    
+
     @Query("SELECT u FROM User u WHERE u.is_active = :isActive " +
             "And u.role = :role")
     List<User> findByIsActiveAndRole(@Param("isActive") boolean isActive, @Param("role") UserRole role);
@@ -45,5 +43,9 @@ public interface UserDao extends JpaRepository<User, Integer> {
             """, nativeQuery = true)
     List<Map<String, Object>> findUnitAssetSummary();
 
-    List<User> findBySquareFootageAndRole(BigDecimal squareFootage, UserRole role);
+    @Query("SELECT u FROM User u WHERE u.role = :role AND (u.squareFootage IS NULL OR u.squareFootage = 0)")
+    List<User> findUnqualifiedResidents(@Param("role") UserRole role);
+
+    @Query("SELECT u FROM User u WHERE u.role = 'ADMIN' OR u.role ='RESIDENT'")
+    List<User> findAllUserExpectSuperadmin();
 }

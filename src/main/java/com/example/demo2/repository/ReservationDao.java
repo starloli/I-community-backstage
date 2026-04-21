@@ -40,7 +40,7 @@ public interface ReservationDao extends JpaRepository<Reservation, Integer> {
             @Param("userId") Integer userId,
             @Param("status") ReservationStatus status);
 
-    @Query("SELECT DISTINCT r FROM Reservation r JOIN FETCH r.user " +
+    @Query("SELECT DISTINCT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.facility " +
             "WHERE r.status = :status " +
             "AND r.date = :date " +
             "ORDER BY r.startTime DESC, r.reservationId ASC")

@@ -21,83 +21,77 @@ import com.example.demo2.security.handler.JwtAuthenticationEntryPoint;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+        private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAccessDeniedHandler jwtAccessDeniedHandler,
-            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+        public SecurityConfig(
+                        JwtAccessDeniedHandler jwtAccessDeniedHandler,
+                        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                        JwtAuthenticationFilter jwtAuthenticationFilter) {
+                this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+                this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
+                http
 
-                .csrf(csrf -> csrf.disable())
+                                .csrf(csrf -> csrf.disable())
 
-                .cors(cors -> {
-                }) // ⭐ 開啟 CORS
+                                .cors(cors -> {
+                                }) // ⭐ 開啟 CORS
 
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        .accessDeniedHandler(jwtAccessDeniedHandler))
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                                .accessDeniedHandler(jwtAccessDeniedHandler))
 
-                .authorizeHttpRequests(auth -> auth
+                                .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(
-                                "/auth/**",
-                                "/admin/login",
-                                "/announ/**",
-                                "/statistics/**",
-                                "/bills/**",
-                                "/payment/callback")
-                        .permitAll()
+                                                .requestMatchers(
+                                                                "/auth/**",
+                                                                "/admin/login",
+                                                                "/announ/**",
+                                                                "/statistics/**",
+                                                                "/bills/**",
+                                                                "/payment/callback")
+                                                .permitAll()
+                                                // swagger顯示API
+                                                .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
 
-                        // swagger顯示API
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/**")
-                        .permitAll()
+                                                .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
+                                                .requestMatchers("/modify/admin","/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/facility/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
 
-                        .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/modify/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                        .requestMatchers(
-                                "/admin/**")
-                        .hasRole("ADMIN")
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-                        .anyRequest().authenticated())
+                return http.build();
+        }
 
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+        // ⭐ CORS 設定
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
 
-        return http.build();
-    }
+                CorsConfiguration config = new CorsConfiguration();
 
-    // ⭐ CORS 設定
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+                config.setAllowedOrigins(List.of("http://localhost:4200"));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowCredentials(true);
 
-        CorsConfiguration config = new CorsConfiguration();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+                source.registerCorsConfiguration("/**", config);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
+                return source;
+        }
 
 }

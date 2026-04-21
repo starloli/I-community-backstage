@@ -25,10 +25,13 @@ public class ModifyResidentRequset {
 	private UserRole role;
 	@NotNull(message = "是否啟用不可為空")
 	private Boolean is_active;
+	@NotNull(message = "坪數不可為空")
 	@DecimalMin(value = "0.0", message = "坪數不能為負")
 	private BigDecimal squareFootage;
+	@NotNull(message = "汽車位數量不可為空")
 	@Min(value = 0, message = "汽車位數量不能為負")
 	private Integer carParkingSpace;
+	@NotNull(message = "機車位數量不可為空")
 	@Min(value = 0, message = "機車位數量不能為負")
 	private Integer motorParkingSpace;
 }
