@@ -3,11 +3,13 @@ package com.example.demo2.dto.response;
 import java.math.BigDecimal;
 
 import com.example.demo2.entity.User;
+import com.example.demo2.enums.UserRole;
 
 
 public record UserResponse(
     Integer userId,
     String userName,
+    UserRole role,
     String fullName,
     String phone,
     String email,
@@ -21,6 +23,7 @@ public record UserResponse(
     	return new UserResponse(
                 user.getUserId(),
                 user.getUserName(),
+                user.getRole(),
                 user.getFullName(),
                 user.getPhone(),
                 user.getEmail(),

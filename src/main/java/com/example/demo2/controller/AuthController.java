@@ -1,6 +1,5 @@
 package com.example.demo2.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,7 +17,6 @@ import com.example.demo2.dto.request.ResetPasswordRequest;
 import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.LoginResponse;
 import com.example.demo2.dto.response.UserResponse;
-import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.AuthService;
 import com.example.demo2.service.UserService;
 
@@ -30,42 +28,35 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
-    
+
 	private final AuthService authService;
 	private final UserService userService;
-	
-
-	
 
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(
-		@Valid @RequestBody LoginRequest request
-	) {
+			@Valid @RequestBody LoginRequest request) {
 		return ResponseEntity.ok(authService.login(request));
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<UserResponse> registerUser(
-		@Valid @RequestBody UserCreateRequest request
-	) {
+			@Valid @RequestBody UserCreateRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
 	}
 
-    @PostMapping("/email/code")
-    public ResponseEntity<Void> registerEmail(
-        @Valid @RequestBody EmailRequest request
-    ) {
-        authService.generateEmailVerifyCode(request.getEmail());
-        return ResponseEntity.noContent().build();
-    }
+	@PostMapping("/email/code")
+	public ResponseEntity<Void> registerEmail(
+			@Valid @RequestBody EmailRequest request) {
+		authService.generateEmailVerifyCode(request.getEmail());
+		return ResponseEntity.noContent().build();
+	}
 
-    @PostMapping("/email/verify")
-    public ResponseEntity<Void> verifyEmail(
-        @Valid @RequestBody EmailVerifyRequest request
-    ) {
-        authService.verifyEmailCode(request);
-        return ResponseEntity.noContent().build();
-    }
+	@PostMapping("/email/verify")
+	public ResponseEntity<Void> verifyEmail(
+			@Valid @RequestBody EmailVerifyRequest request) {
+		authService.verifyEmailCode(request);
+		return ResponseEntity.noContent().build();
+	}
 
 	@PostMapping("/forgot-password")
 	public ResponseEntity<Void> forgotPassword(@Valid @RequestBody EmailRequest request) {
@@ -78,10 +69,10 @@ public class AuthController {
 		authService.resetPassword(request);
 		return ResponseEntity.noContent().build();
 	}
-	
-	//true是有 false是無
+
+	// true是有 false是無
 	@GetMapping("/checking/userName")
-	public ResponseEntity<Boolean> checkingUserName(@RequestParam("name") String name ){
-return ResponseEntity.ok(authService.checkingUserName(name));
+	public ResponseEntity<Boolean> checkingUserName(@RequestParam("name") String name) {
+		return ResponseEntity.ok(authService.checkingUserName(name));
 	}
 }

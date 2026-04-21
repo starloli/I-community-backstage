@@ -1,6 +1,5 @@
 package com.example.demo2.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +19,12 @@ import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
 import com.example.demo2.dto.response.ModifyResidentResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
-import com.example.demo2.enums.UserRole;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.ModifyResidentService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -56,16 +55,23 @@ public class ModifyResidentController {
       // 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-
+  }
+  
+  @GetMapping("/superadmin")
+  public ResponseEntity<List<UserResponse>> getAllUsers() {
+    List<UserResponse> response = userDao.findAllUserExpectSuperadmin().stream()
+        .map(UserResponse::from)
+        .toList();
+      return ResponseEntity.ok(response);
   }
 
-	// 普通管理員修改用戶資料
-	@PutMapping("/admin")
-	public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
-		try {
-			modifyResidentService.modifyResidentData(request);
-			return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
-		} catch (RuntimeException e) {
+  // 普通管理員修改用戶資料
+  @PutMapping("/admin")
+  public ResponseEntity<?> adminModifyResidentData(@Valid @RequestBody ModifyResidentRequset request) {
+    try {
+      modifyResidentService.modifyResidentData(request);
+      return ResponseEntity.ok(Map.of("message", "普通管理員：資料與權限更新成功"));
+    } catch (RuntimeException e) {
 
       return ResponseEntity.badRequest().body(e.getMessage());
     }
@@ -109,13 +115,4 @@ public class ModifyResidentController {
         .toList();
     return ResponseEntity.ok(responses);
   }
-
-  @GetMapping("/getUnqualifiedUser")
-  public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
-    List<UserResponse> response = userDao.findBySquareFootageAndRole(null, UserRole.RESIDENT).stream()
-        .map(UserResponse::from)
-        .toList();
-    return ResponseEntity.ok(response);
-  }
-
 }
