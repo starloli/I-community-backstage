@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.BatchBillRequest;
+import com.example.demo2.dto.request.BillChargeRepairFeeRequest;
 import com.example.demo2.dto.request.BillRequset;
 import com.example.demo2.dto.response.BatchResultDto;
 import com.example.demo2.dto.response.MonthlyBillDto;
@@ -129,5 +130,15 @@ public class BillController {
     Boolean month = billService.checkBillInThisMonth(billingMonth);
     return month ? ResponseEntity.ok(Map.of("message", "本月已經有賬單了")) : ResponseEntity.ok((Map.of("message", "本月還沒有賬單")));
   }
+//管理員向個別住戶收取維修費
+  @PostMapping("/chargeRepairFee")
+  public ResponseEntity chargeRepairFee(@RequestBody BillChargeRepairFeeRequest billChargeRepairFeeRequest) {
+	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User creator = userDao.findByUserName(authentication.getName())
+	        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
 
+	  return ResponseEntity.ok(billService.chargeRepairFee(billChargeRepairFeeRequest,creator));
+  }
+  
+  
 }

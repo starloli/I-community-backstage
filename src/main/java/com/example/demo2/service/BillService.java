@@ -12,17 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.BatchBillRequest;
+import com.example.demo2.dto.request.BillChargeRepairFeeRequest;
 import com.example.demo2.dto.request.BillRequset;
 import com.example.demo2.dto.response.BatchResultDto;
 import com.example.demo2.dto.response.MonthlyBillDto;
 import com.example.demo2.entity.Bill;
-
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.BillType;
 import com.example.demo2.enums.paymentMethodEnum;
 import com.example.demo2.repository.BillDao;
-
 import com.example.demo2.repository.UserDao;
 
 @Service
@@ -217,5 +216,51 @@ public class BillService {
     	        }
     	        return false;
     }
+    
+    @Transactional
+    public BatchResultDto chargeRepairFee(BillChargeRepairFeeRequest billChargeRepairFeeRequest,User creator) {
+    	List<User>unitNumber=userDao.findByUnitNumber(billChargeRepairFeeRequest.getUnitNumber());
+    	if (unitNumber.isEmpty()) {
+    	    throw new RuntimeException("找不到房號為 " 
+    	        + billChargeRepairFeeRequest.getUnitNumber() + " 的住戶");
+    	}
+        Map<String, BigDecimal> fees = billChargeRepairFeeRequest.getCommonFees();
+        BigDecimal water = fees.getOrDefault("WATER", BigDecimal.ZERO);
+        BigDecimal elec = fees.getOrDefault("ELECTRICITY", BigDecimal.ZERO);
+        BigDecimal mgmt = fees.getOrDefault("MANAGEMENTFEE", BigDecimal.ZERO);
+        BigDecimal car = fees.getOrDefault("CAR_PARKINGCLEANINGFEE", BigDecimal.ZERO);
+        BigDecimal motor = fees.getOrDefault("LOCOMOTIVE_PARKINGCLEANINGFEE", BigDecimal.ZERO);
+        BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
+    	
+        Bill bill = new Bill();
+        bill.setUnitNumber(unitNumber.get(0).getUnitNumber());
+        bill.setTitle(billChargeRepairFeeRequest.getTitle());
+        bill.setBillingMonth(billChargeRepairFeeRequest.getBillingMonth());
+        bill.setDueDate(billChargeRepairFeeRequest.getDueDate());
+        bill.setRemark(billChargeRepairFeeRequest.getRemark());
+        bill.setCreator(creator);
+      
+        bill.setBillType(BillType.OTHEREXPENSES);
+        
+        
+        bill.setWaterFee(water);
+        bill.setElectricityFee(elec);
+        bill.setManagementFee(mgmt);
+        bill.setCarParkingFee(car);
+        bill.setLocomotiveParkingFee(motor);
+        bill.setOtherFee(other);
+        BigDecimal total = water.add(elec).add(mgmt).add(car).add(motor).add(other);
+        BigDecimal roundedTotal = total.setScale(0, RoundingMode.HALF_UP);
+        bill.setAmount(roundedTotal);
+
+        // 4. 存檔並回傳你想要的 MonthlyBillDto 格式
+        Bill savedBill = billDao.save(bill);
+        
+        return new BatchResultDto(1, new java.util.ArrayList<>());
+    	
+    }
+    
+    
+    
         }
 	

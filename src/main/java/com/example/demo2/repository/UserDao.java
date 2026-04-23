@@ -45,4 +45,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM User u WHERE u.role = :role AND (u.squareFootage IS NULL OR u.squareFootage = 0)")
     List<User> findUnqualifiedResidents(@Param("role") UserRole role);
+    
+    
+
 }
