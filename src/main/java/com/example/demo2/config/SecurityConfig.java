@@ -59,7 +59,8 @@ public class SecurityConfig {
                                                                 "/announ/**",
                                                                 "/statistics/**",
                                                                 "/bills/**",
-                                                                "/payment/callback")
+                                                                "/payment/callback",
+                                                                "/calendar/**")
                                                 .permitAll()
                                                 // swagger顯示API
                                                 .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
