@@ -154,4 +154,18 @@ public class AuthService {
     	 }
     	 return true;
     }
+
+    // TODO: 【Phase 2】超級管理員密碼驗證和信箱驗證相關方法
+    // 1. verifyOldPassword(User user, String rawPassword): boolean
+    //    - 驗證超級管理員舊密碼，進入編輯頁面前使用
+    //    - 使用 BCryptPasswordEncoder 對比密碼
+    //
+    // 2. generatePasswordChangeVerifyCode(String email): void
+    //    - 為密碼變更生成驗證碼，發送到現有信箱
+    //    - 驗證碼有效期 15 分鐘
+    //    - 利用現有的 EmailVerifyCode entity 和 emailService
+    //
+    // 3. verifyPasswordChangeCode(String email, String code): boolean
+    //    - 驗證密碼變更的驗證碼
+    //    - 返回 boolean，標記驗證碼為已使用
 }

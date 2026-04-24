@@ -31,7 +31,7 @@ public class StatisticsController {
     @GetMapping
     public ResponseEntity<StatisticsResponse> getStatistics() {
         StatisticsResponse response = new StatisticsResponse(
-                userService.getTotalNumber(),
+                userService.getActivedResidentNumber(),
                 visitorService.findTodayVisitorNum(),
                 packageService.geWaittingNumber(),
                 repairRequestService.searchPendingNum(),
