@@ -55,6 +55,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public long getActivedResidentNumber() {
+        return userRepository.countByActiveResident();
+    }
+    
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllResidentUsers() {
         List<UserResponse> users = userRepository.findByIsActiveAndRole(true, UserRole.RESIDENT).stream()
                 .map(UserResponse::from).toList();

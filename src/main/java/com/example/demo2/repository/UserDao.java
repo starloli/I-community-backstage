@@ -24,6 +24,9 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     List<User> findByRole(UserRole role);
 
+    @Query("SELECT COUNT(u) FROM User u WHERE u.is_active = true AND u.role = 'RESIDENT'")
+    long countByActiveResident();
+
     Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
 
     @Query("SELECT u FROM User u WHERE u.is_active = :isActive " +
