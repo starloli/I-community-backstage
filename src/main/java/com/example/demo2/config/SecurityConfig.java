@@ -64,6 +64,17 @@ public class SecurityConfig {
                                                 // swagger顯示API
                                                 .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
 
+                                                // TODO: 【Phase 4】新增超級管理員密碼驗證和資料更新端點權限
+                                                // 需要添加以下路由，所有需要 SUPER_ADMIN 角色：
+                                                // - /modify/superadmin/verify-password (POST) - 密碼驗證
+                                                // - /modify/superadmin/send-change-verify-code (POST) - 發送驗證碼
+                                                // - /modify/superadmin/self (PUT) - 更新資料
+                                                //
+                                                // 修改方式：
+                                                // .requestMatchers("/modify/superadmin",
+                                                //                 "/modify/superadmin/verify-password",
+                                                //                 "/modify/superadmin/send-change-verify-code",
+                                                //                 "/modify/superadmin/self").hasRole("SUPER_ADMIN")
                                                 .requestMatchers("/modify/superadmin").hasRole("SUPER_ADMIN")
                                                 .requestMatchers("/modify/admin","/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                                                 .requestMatchers("/facility/**").hasAnyRole("ADMIN", "SUPER_ADMIN")

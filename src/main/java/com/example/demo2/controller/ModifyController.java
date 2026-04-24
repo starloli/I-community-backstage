@@ -51,7 +51,7 @@ public class ModifyController {
   public ResponseEntity<?> superadminSendChangeVerifyCode() {
     // TODO: 【Phase 3】發送驗證碼到舊信箱（確認修改前）
     // 功能：在點擊「儲存變更」時，發送驗證碼到現有信箱
-    // 
+    //
     // 步驟：
     // 1. 從 JWT token 獲取當前用戶信息
     // 2. 調用 authService.generatePasswordChangeVerifyCode(currentUser.getEmail())
