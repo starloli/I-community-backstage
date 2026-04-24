@@ -1,12 +1,5 @@
 package com.example.demo2.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import com.example.demo2.enums.FinancailLedgerCategory;
-import com.example.demo2.enums.TransactionType;
-import com.sun.istack.NotNull;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

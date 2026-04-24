@@ -30,14 +30,14 @@ public class CalendarController {
 
     @GetMapping("/holiday")
     public List<CalendarResponse> getHolidays(
-        @RequestParam String start
+        @RequestParam("start") String start
     ) {
         return service.getHolidays(start);
     }
 
     @GetMapping
     public List<CalendarResponse> getEvents(
-        @RequestParam String start
+        @RequestParam("start") String start
     ) {
         return service.getEvents(start);
     }
