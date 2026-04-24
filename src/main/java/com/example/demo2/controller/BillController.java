@@ -84,8 +84,10 @@ public class BillController {
    */
   @PutMapping("/pay/admin/{id}")
   public ResponseEntity<Map<String, String>> adminPayBill(@PathVariable("id") Integer id) {
-
-    billService.putBillStatus(id);
+	  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    User creator = userDao.findByUserName(authentication.getName())
+	        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+    billService.putBillStatus(id,creator);
     return ResponseEntity.ok(Map.of("message", "繳費狀態已更新"));
   }
 

@@ -20,6 +20,8 @@ import com.example.demo2.entity.Bill;
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.BillType;
+import com.example.demo2.enums.FinancailLedgerCategory;
+import com.example.demo2.enums.TransactionType;
 import com.example.demo2.enums.paymentMethodEnum;
 import com.example.demo2.repository.BillDao;
 import com.example.demo2.repository.UserDao;
@@ -31,6 +33,9 @@ public class BillService {
     BillDao billDao;
     @Autowired
     private UserDao userDao;
+    
+    @Autowired
+    private FinancialLedgerService financialLedgerService;
 
     @Transactional
     public MonthlyBillDto sendMonthlyBill(BillRequset billRequset, User creator) {
@@ -92,12 +97,27 @@ public class BillService {
 
     // 管理員更新狀態
     @Transactional
-    public void putBillStatus(Integer id) {
+    public void putBillStatus(Integer id,User create) {
         Bill bill = billDao.findById(id != null ? id : 0).orElseThrow(() -> new RuntimeException("找不到該帳單"));
         bill.setStatus(BillStatus.PAID);
         bill.setPaymentMethod(paymentMethodEnum.Cash);
         bill.setPaidAtDate(java.time.LocalDateTime.now()); // 建議加上繳費時間
         billDao.save(bill);
+        FinancailLedgerCategory category = FinancailLedgerCategory.MGMT_FEE; // 預設管理費
+        if (bill.getBillType() == BillType.OTHEREXPENSES) {
+            category = FinancailLedgerCategory.REPAIR; // 如果是雜項則歸類為維修費
+        }
+
+        financialLedgerService.recordTransaction(
+            TransactionType.INCOME,               // 類型：收入
+            bill.getAmount(),                     // 金額
+            category,                             // 分類
+            "管理員代收(現金)：" + bill.getTitle(),      // 備註
+            "BILL",                               // 來源模組
+            bill.getBillId().longValue(),         // 來源 ID
+            create                                 // 線上繳費通常無特定操作管理員，傳 null
+        );
+
     }
 
     // 用戶自己繳費
@@ -107,6 +127,20 @@ public class BillService {
         bill.setPaymentMethod(paymentMethodEnum.Online);
         bill.setPaidAtDate(java.time.LocalDateTime.now());
         billDao.save(bill);
+        FinancailLedgerCategory category = FinancailLedgerCategory.MGMT_FEE; // 預設管理費
+        if (bill.getBillType() == BillType.OTHEREXPENSES) {
+            category = FinancailLedgerCategory.REPAIR; // 如果是雜項則歸類為維修費
+        }
+
+        financialLedgerService.recordTransaction(
+            TransactionType.INCOME,               // 類型：收入
+            bill.getAmount(),                     // 金額
+            category,                             // 分類
+            "住戶線上繳費：" + bill.getTitle(),      // 備註
+            "BILL",                               // 來源模組
+            bill.getBillId().longValue(),         // 來源 ID
+            null                                  // 線上繳費通常無特定操作管理員，傳 null
+        );
     }
 
     // 得到全部住戶的賬單情況
