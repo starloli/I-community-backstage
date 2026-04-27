@@ -10,6 +10,7 @@ import com.example.demo2.dto.request.UserCreateRequest;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.repository.UserDao;
 
@@ -56,12 +57,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public long getActivedResidentNumber() {
-        return userRepository.countByActiveResident();
+        return userRepository.countByStatusAndRole(UserStatus.ACTIVE, UserRole.RESIDENT);
     }
     
     @Transactional(readOnly = true)
     public List<UserResponse> getAllResidentUsers() {
-        List<UserResponse> users = userRepository.findByIsActiveAndRole(true, UserRole.RESIDENT).stream()
+        List<UserResponse> users = userRepository.findByStatusAndRole(UserStatus.ACTIVE, UserRole.RESIDENT).stream()
                 .map(UserResponse::from).toList();
         return users;
     }
