@@ -12,17 +12,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.BatchBillRequest;
+import com.example.demo2.dto.request.BillChargeRepairFeeRequest;
 import com.example.demo2.dto.request.BillRequset;
 import com.example.demo2.dto.response.BatchResultDto;
 import com.example.demo2.dto.response.MonthlyBillDto;
 import com.example.demo2.entity.Bill;
-
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.BillType;
+import com.example.demo2.enums.FinancailLedgerCategory;
+import com.example.demo2.enums.TransactionType;
 import com.example.demo2.enums.paymentMethodEnum;
 import com.example.demo2.repository.BillDao;
-
 import com.example.demo2.repository.UserDao;
 
 @Service
@@ -32,6 +33,9 @@ public class BillService {
     BillDao billDao;
     @Autowired
     private UserDao userDao;
+    
+    @Autowired
+    private FinancialLedgerService financialLedgerService;
 
     @Transactional
     public MonthlyBillDto sendMonthlyBill(BillRequset billRequset, User creator) {
@@ -93,12 +97,27 @@ public class BillService {
 
     // 管理員更新狀態
     @Transactional
-    public void putBillStatus(Integer id) {
+    public void putBillStatus(Integer id,User create) {
         Bill bill = billDao.findById(id != null ? id : 0).orElseThrow(() -> new RuntimeException("找不到該帳單"));
         bill.setStatus(BillStatus.PAID);
         bill.setPaymentMethod(paymentMethodEnum.Cash);
         bill.setPaidAtDate(java.time.LocalDateTime.now()); // 建議加上繳費時間
         billDao.save(bill);
+        FinancailLedgerCategory category = FinancailLedgerCategory.MGMT_FEE; // 預設管理費
+        if (bill.getBillType() == BillType.OTHEREXPENSES) {
+            category = FinancailLedgerCategory.REPAIR; // 如果是雜項則歸類為維修費
+        }
+
+        financialLedgerService.recordTransaction(
+            TransactionType.INCOME,               // 類型：收入
+            bill.getAmount(),                     // 金額
+            category,                             // 分類
+            "管理員代收(現金)：" + bill.getTitle(),      // 備註
+            "BILL",                               // 來源模組
+            bill.getBillId().longValue(),         // 來源 ID
+            create                                 // 線上繳費通常無特定操作管理員，傳 null
+        );
+
     }
 
     // 用戶自己繳費
@@ -108,6 +127,20 @@ public class BillService {
         bill.setPaymentMethod(paymentMethodEnum.Online);
         bill.setPaidAtDate(java.time.LocalDateTime.now());
         billDao.save(bill);
+        FinancailLedgerCategory category = FinancailLedgerCategory.MGMT_FEE; // 預設管理費
+        if (bill.getBillType() == BillType.OTHEREXPENSES) {
+            category = FinancailLedgerCategory.REPAIR; // 如果是雜項則歸類為維修費
+        }
+
+        financialLedgerService.recordTransaction(
+            TransactionType.INCOME,               // 類型：收入
+            bill.getAmount(),                     // 金額
+            category,                             // 分類
+            "住戶線上繳費：" + bill.getTitle(),      // 備註
+            "BILL",                               // 來源模組
+            bill.getBillId().longValue(),         // 來源 ID
+            null                                  // 線上繳費通常無特定操作管理員，傳 null
+        );
     }
 
     // 得到全部住戶的賬單情況
@@ -213,7 +246,58 @@ public class BillService {
 
         if (exists) {
             return true;
-        }
-        return false;
+    	        if (exists) {
+    	           return true;
+    	        }
+    	        return false;
     }
 }
+    @Transactional
+    public BatchResultDto chargeRepairFee(BillChargeRepairFeeRequest billChargeRepairFeeRequest,User creator) {
+    	List<User>unitNumber=userDao.findByUnitNumber(billChargeRepairFeeRequest.getUnitNumber());
+    	if (unitNumber.isEmpty()) {
+    	    throw new RuntimeException("找不到房號為 " 
+    	        + billChargeRepairFeeRequest.getUnitNumber() + " 的住戶");
+    	}
+        Map<String, BigDecimal> fees = billChargeRepairFeeRequest.getCommonFees();
+        BigDecimal water = fees.getOrDefault("WATER", BigDecimal.ZERO);
+        BigDecimal elec = fees.getOrDefault("ELECTRICITY", BigDecimal.ZERO);
+        BigDecimal mgmt = fees.getOrDefault("MANAGEMENTFEE", BigDecimal.ZERO);
+        BigDecimal car = fees.getOrDefault("CAR_PARKINGCLEANINGFEE", BigDecimal.ZERO);
+        BigDecimal motor = fees.getOrDefault("LOCOMOTIVE_PARKINGCLEANINGFEE", BigDecimal.ZERO);
+        BigDecimal other = fees.getOrDefault("OTHERFEE", BigDecimal.ZERO);
+    	
+        Bill bill = new Bill();
+        bill.setUnitNumber(unitNumber.get(0).getUnitNumber());
+        bill.setTitle(billChargeRepairFeeRequest.getTitle());
+        bill.setBillingMonth(billChargeRepairFeeRequest.getBillingMonth());
+        bill.setDueDate(billChargeRepairFeeRequest.getDueDate());
+        bill.setRemark(billChargeRepairFeeRequest.getRemark());
+        bill.setCreator(creator);
+      
+        bill.setBillType(BillType.OTHEREXPENSES);
+        
+        
+        bill.setWaterFee(water);
+        bill.setElectricityFee(elec);
+        bill.setManagementFee(mgmt);
+        bill.setCarParkingFee(car);
+        bill.setLocomotiveParkingFee(motor);
+        bill.setOtherFee(other);
+        BigDecimal total = water.add(elec).add(mgmt).add(car).add(motor).add(other);
+        BigDecimal roundedTotal = total.setScale(0, RoundingMode.HALF_UP);
+        bill.setAmount(roundedTotal);
+
+        // 4. 存檔並回傳你想要的 MonthlyBillDto 格式
+        Bill savedBill = billDao.save(bill);
+        
+        return new BatchResultDto(1, new java.util.ArrayList<>());
+    	
+    }
+    
+    
+    
+        }
+    
+    
+
