@@ -32,7 +32,6 @@ public class UserService {
                 request.email(),
                 request.phone(),
                 request.unitNumber());
-        
         userRepository.findFirstByUnitNumberAndSquareFootageIsNotNull(request.unitNumber()).ifPresent(existingUser ->{
         	System.out.println("找到現有門牌資料！坪數: " + existingUser.getSquareFootage());
         	user.setSquareFootage(existingUser.getSquareFootage());
