@@ -28,6 +28,7 @@ import com.example.demo2.entity.Employee;
 import com.example.demo2.entity.FinancialLedger;
 import com.example.demo2.entity.SalaryRecord;
 import com.example.demo2.entity.User;
+import com.example.demo2.repository.CategorySummaryProjection;
 import com.example.demo2.repository.DepartmentDao;
 import com.example.demo2.repository.EmployeeDao;
 import com.example.demo2.repository.SalaryRecordDao;
@@ -36,13 +37,16 @@ import com.example.demo2.service.FinancialLedgerService;
 import com.example.demo2.service.FinancialService;
 import com.example.demo2.service.SalaryService;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 
 @RestController
-@RequiredArgsConstructor
+
 @RequestMapping("/Salary")
 @CrossOrigin(origins = "http://localhost:4200")
 public class SalaryController {
+
+	@Autowired
+    private  UserController userController;
 	@Autowired
 	private DepartmentDao departmentDao;
 	
@@ -60,6 +64,8 @@ public class SalaryController {
     private FinancialService financialService;
     @Autowired
     private FinancialLedgerService financialLedgerService;
+
+
     //新增一個部門
     @PostMapping("/createDeparment")
     public ResponseEntity<Map<String, String>> createDeparment(@RequestBody Department department){
@@ -164,7 +170,7 @@ public class SalaryController {
     
     //手動輸入支出或者收入
     @PostMapping("/recordManualTransaction")
-    public ResponseEntity<Map<String,String>> recordManualTransaction(@RequestBody	ManualTransactionRequest request) {
+    public ResponseEntity<Map<String,String>> recordManualTransaction( @Valid @RequestBody	ManualTransactionRequest request) {
     	Map<String, String> response = new HashMap<>();
     
     	try {
@@ -179,4 +185,12 @@ public class SalaryController {
     	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     	    		}
 }
+    
+    //住戶查看的明細  是分組后的資料
+    
+    @GetMapping("/ResidentsInspect")
+    public ResponseEntity<List<CategorySummaryProjection>> ResidentsInspect(){
+  
+    	return   	ResponseEntity.ok(financialService.residentsInspect());
+    }
 }

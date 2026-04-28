@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo2.dto.request.FinancialSummaryRequest;
+
 import com.example.demo2.entity.FinancialLedger;
-import com.example.demo2.entity.User;
 import com.example.demo2.enums.TransactionType;
+import com.example.demo2.repository.CategorySummaryProjection;
 import com.example.demo2.repository.FinancialLedgerDao;
 import com.example.demo2.repository.UserDao;
 
@@ -75,5 +74,11 @@ public class FinancialService {
     	return ledgerDao.findByYearAndMonth(year,month);
     }
     
+    
+    //住戶查看的明細 
+    public List<CategorySummaryProjection>  residentsInspect(){
 
+    	List<CategorySummaryProjection> list = ledgerDao.findDetailedMonthlyStats();
+    	return list;
+    }
 }
