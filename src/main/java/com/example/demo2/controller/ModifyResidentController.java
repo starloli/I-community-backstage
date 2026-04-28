@@ -19,12 +19,12 @@ import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
 import com.example.demo2.dto.response.ModifyResidentResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
-import com.example.demo2.enums.UserRole;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.ModifyResidentService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -55,7 +55,14 @@ public class ModifyResidentController {
       // 回傳 400 Bad Request 並帶上 Service 丟出的錯誤訊息
       return ResponseEntity.badRequest().body(e.getMessage());
     }
-
+  }
+  
+  @GetMapping("/superadmin")
+  public ResponseEntity<List<UserResponse>> getAllUsers() {
+    List<UserResponse> response = userDao.findAllUserExpectSuperadmin().stream()
+        .map(UserResponse::from)
+        .toList();
+      return ResponseEntity.ok(response);
   }
 
   // 普通管理員修改用戶資料
@@ -108,13 +115,4 @@ public class ModifyResidentController {
         .toList();
     return ResponseEntity.ok(responses);
   }
-
-  @GetMapping("/getUnqualifiedResidents")
-  public ResponseEntity<List<UserResponse>> getUnqualifiedUser() {
-    List<UserResponse> response = userDao.findUnqualifiedResidents(UserRole.RESIDENT).stream()
-        .map(UserResponse::from)
-        .toList();
-    return ResponseEntity.ok(response);
-  }
-
 }
