@@ -3,6 +3,7 @@ package com.example.demo2.dto.request;
 import java.math.BigDecimal;
 
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -24,7 +25,7 @@ public class ModifyResidentRequset {
 	private String unitNumber;
 	private UserRole role;
 	@NotNull(message = "是否啟用不可為空")
-	private Boolean is_active;
+	private UserStatus status;
 	@NotNull(message = "坪數不可為空")
 	@DecimalMin(value = "0.0", message = "坪數不能為負")
 	private BigDecimal squareFootage;

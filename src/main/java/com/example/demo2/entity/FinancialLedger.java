@@ -60,7 +60,7 @@ public class FinancialLedger {
         "passwordHash", 
         "email", 
         "phone", 
-        "is_active",
+        "status",
         "squareFootage",
         "carParkingSpace",
         "motorParkingSpace",

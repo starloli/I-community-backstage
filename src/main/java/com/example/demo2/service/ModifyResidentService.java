@@ -36,7 +36,7 @@ public class ModifyResidentService {
 			throw new RuntimeException("權限不足：您無法將住戶提升為管理員");
 		}
 
-		if (targetUser.getIs_active() != request.getIs_active()) {
+		if (targetUser.getStatus() != request.getStatus()) {
 			throw new RuntimeException("權限不足：普通管理員無法啟用或停用帳號");
 		}
 
@@ -55,7 +55,7 @@ public class ModifyResidentService {
 		// 🛑 防自殺與超管互鬥判斷
 		if (targetUser.getUserId().equals(currentAdminId)) {
 			// 如果改的是自己，檢查是否在降級或停權
-			if (request.getRole() != targetUser.getRole() || Boolean.FALSE.equals(request.getIs_active())) {
+			if (request.getRole() != targetUser.getRole() || Boolean.FALSE.equals(request.getStatus())) {
 				throw new RuntimeException("為了系統安全，您不能修改自己的權限等級或停用自己的帳號。");
 			}
 		} else if (targetUser.getRole() == UserRole.SUPER_ADMIN) {
@@ -65,7 +65,7 @@ public class ModifyResidentService {
 
 		// ✅ 超管可以改權限與狀態
 		targetUser.setRole(request.getRole());
-		targetUser.setIs_active(request.getIs_active());
+		targetUser.setStatus(request.getStatus());
 
 		// ✅ 超管也需要執行行政與資產資料更新
 		updateGeneralInfoAndAssets(targetUser, request);

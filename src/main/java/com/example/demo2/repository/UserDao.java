@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 
 public interface UserDao extends JpaRepository<User, Integer> {
 
@@ -24,14 +25,15 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     List<User> findByRole(UserRole role);
 
-    @Query("SELECT COUNT(u) FROM User u WHERE u.is_active = true AND u.role = 'RESIDENT'")
-    long countByActiveResident();
+    @Query("SELECT COUNT(u) FROM User u WHERE u.status = :status " +
+            "AND u.role = :role")
+    long countByStatusAndRole(@Param("status") UserStatus status, @Param("role") UserRole role);
 
     Optional<User> findFirstByUnitNumberAndSquareFootageIsNotNull(String unitNumber);
 
-    @Query("SELECT u FROM User u WHERE u.is_active = :isActive " +
+    @Query("SELECT u FROM User u WHERE u.status = :status " +
             "And u.role = :role")
-    List<User> findByIsActiveAndRole(@Param("isActive") boolean isActive, @Param("role") UserRole role);
+    List<User> findByStatusAndRole(@Param("status") UserStatus status, @Param("role") UserRole role);
 
     @Query(value = """
             SELECT
@@ -40,7 +42,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
                 MAX(u.car_parking_space) as totalCarSpaces,
                 MAX(u.motor_parking_space) as totalMotoSpaces
             FROM users u
-            WHERE u.is_active = true
+            WHERE u.status = 'ACTIVE'
             AND u.role = 'RESIDENT'
             GROUP BY u.unit_number
             """, nativeQuery = true)
