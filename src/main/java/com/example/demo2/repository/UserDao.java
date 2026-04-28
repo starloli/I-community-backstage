@@ -16,6 +16,8 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     Optional<User> findByUserName(String userName);
 
+    Optional<User> findByUserNameAndStatusAndRole(String userName, UserStatus status, UserRole role);
+
     List<User> findByUnitNumber(String address);
 
     @Query("SELECT DISTINCT u.unitNumber FROM User u")

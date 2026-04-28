@@ -25,6 +25,7 @@ import com.example.demo2.dto.response.MonthlyBillDto;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 import com.example.demo2.repository.UserDao;
 import com.example.demo2.service.BillService;
 
@@ -84,10 +85,10 @@ public class BillController {
    */
   @PutMapping("/pay/admin/{id}")
   public ResponseEntity<Map<String, String>> adminPayBill(@PathVariable("id") Integer id) {
-	  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    User creator = userDao.findByUserName(authentication.getName())
-	        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
-    billService.putBillStatus(id,creator);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    User creator = userDao.findByUserName(authentication.getName())
+        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+    billService.putBillStatus(id, creator);
     return ResponseEntity.ok(Map.of("message", "繳費狀態已更新"));
   }
 
@@ -108,7 +109,8 @@ public class BillController {
   @PostMapping("/sendAllBills")
   public ResponseEntity<BatchResultDto> sendAllbills(@RequestBody BatchBillRequest request) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User creator = userDao.findByUserName(authentication.getName())
+    User creator = userDao
+        .findByUserNameAndStatusAndRole(authentication.getName(), UserStatus.ACTIVE, UserRole.RESIDENT)
         .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
     BatchResultDto list = billService.sendAllBillsToUnit(request, creator);
     return ResponseEntity.ok(list);
@@ -132,15 +134,15 @@ public class BillController {
     Boolean month = billService.checkBillInThisMonth(billingMonth);
     return month ? ResponseEntity.ok(Map.of("message", "本月已經有賬單了")) : ResponseEntity.ok((Map.of("message", "本月還沒有賬單")));
   }
-//管理員向個別住戶收取維修費
+
+  // 管理員向個別住戶收取維修費
   @PostMapping("/chargeRepairFee")
   public ResponseEntity chargeRepairFee(@RequestBody BillChargeRepairFeeRequest billChargeRepairFeeRequest) {
-	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    User creator = userDao.findByUserName(authentication.getName())
-	        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    User creator = userDao.findByUserName(authentication.getName())
+        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
 
-	  return ResponseEntity.ok(billService.chargeRepairFee(billChargeRepairFeeRequest,creator));
+    return ResponseEntity.ok(billService.chargeRepairFee(billChargeRepairFeeRequest, creator));
   }
-  
-  
+
 }
