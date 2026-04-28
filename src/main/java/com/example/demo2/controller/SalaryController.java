@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo2.dto.request.FinancialSummaryRequest;
+import com.example.demo2.dto.request.ManualTransactionRequest;
 import com.example.demo2.dto.request.SalaryGenerateRequest;
 import com.example.demo2.dto.request.SalaryPayRequest;
 import com.example.demo2.entity.Department;
@@ -31,6 +32,7 @@ import com.example.demo2.repository.DepartmentDao;
 import com.example.demo2.repository.EmployeeDao;
 import com.example.demo2.repository.SalaryRecordDao;
 import com.example.demo2.repository.UserDao;
+import com.example.demo2.service.FinancialLedgerService;
 import com.example.demo2.service.FinancialService;
 import com.example.demo2.service.SalaryService;
 
@@ -56,6 +58,8 @@ public class SalaryController {
     private UserDao userDao;
     @Autowired
     private FinancialService financialService;
+    @Autowired
+    private FinancialLedgerService financialLedgerService;
     //新增一個部門
     @PostMapping("/createDeparment")
     public ResponseEntity<Map<String, String>> createDeparment(@RequestBody Department department){
@@ -130,14 +134,49 @@ public class SalaryController {
     public FinancialSummaryRequest getMonthly(@PathVariable("year") int year, @PathVariable("month") int month) {
         return financialService.getMonthlySummary(year, month);
     }
+    //得到特定月份的明細
+    @GetMapping("summary/month/{year}/{month}")
+    public List<FinancialLedger> summaryMonth(@PathVariable("year") int year, @PathVariable("month") int month){
+
+    	return     	financialService.getSummaryMonth(year,month);
+    	
+    }
+    
+    
+    //得到特定年份的中全部月份的盈餘
+    @GetMapping("/summary/{year}")
+    public List<FinancialSummaryRequest> getYearSummary(@PathVariable("year") int year){
+    	
+    	return financialService.getYearSummary(year);
+    }
+    
+    
 //    / 獲取目前總資產狀態
     @GetMapping("/summary/total")
     public FinancialSummaryRequest getTotal() {
         return financialService.getTotalSummary();
     }
-    
+    //支出收入明細
     @GetMapping("/summary/now")
     public List<FinancialLedger> summaryNow(){
     	return financialService.getAllTransactions();
     }
+    
+    //手動輸入支出或者收入
+    @PostMapping("/recordManualTransaction")
+    public ResponseEntity<Map<String,String>> recordManualTransaction(@RequestBody	ManualTransactionRequest request) {
+    	Map<String, String> response = new HashMap<>();
+    
+    	try {
+    	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	    User creator = userDao.findByUserName(authentication.getName())
+    	        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+    	    this.financialLedgerService.recordManualTransaction(request,creator);
+    	    response.put("新增成功","ok");
+    return ResponseEntity.ok(response);
+    	}catch (Exception e) {
+    	    response.put("message", "新增失敗：" + e.getMessage());
+    	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    	    		}
+}
 }
