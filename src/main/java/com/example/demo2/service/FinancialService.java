@@ -2,20 +2,27 @@ package com.example.demo2.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo2.dto.request.FinancialSummaryRequest;
 import com.example.demo2.entity.FinancialLedger;
+import com.example.demo2.entity.User;
 import com.example.demo2.enums.TransactionType;
 import com.example.demo2.repository.FinancialLedgerDao;
+import com.example.demo2.repository.UserDao;
 
 @Service
 public class FinancialService {
 	@Autowired
     private FinancialLedgerDao ledgerDao;
+	@Autowired 
+	private UserDao userDao;
 
     // 獲取本月盈餘
     public FinancialSummaryRequest getMonthlySummary(int year, int month) {
@@ -31,6 +38,17 @@ public class FinancialService {
 
         return new FinancialSummaryRequest(income, expense, income.subtract(expense));
     }
+    //得到一年每個月的盈餘
+    public List<FinancialSummaryRequest> getYearSummary(int year){
+    	List<FinancialSummaryRequest> yearlyData = new ArrayList<>();
+    	for(int i=1;i<=12;i++) {
+    		FinancialSummaryRequest monthlyData=	this.getMonthlySummary(year,i);
+    		yearlyData.add(monthlyData);
+    	}
+    	return yearlyData;
+    }
+    
+    
 
     // 獲取目前總盈餘 (開站至今)
     public FinancialSummaryRequest getTotalSummary() {
@@ -46,8 +64,16 @@ public class FinancialService {
 
     //得到全部的明細
     public List<FinancialLedger> getAllTransactions() {
+
+   
         return ledgerDao.findAllByOrderByIdDesc();
     }
 
+    //得到特定月份的明細
+    public List<FinancialLedger> getSummaryMonth(int year,int month){
+    	
+    	return ledgerDao.findByYearAndMonth(year,month);
+    }
+    
 
 }

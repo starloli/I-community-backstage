@@ -28,4 +28,7 @@ public interface FinancialLedgerDao extends JpaRepository<FinancialLedger,Long> 
     
     List<FinancialLedger> findAllByOrderByIdDesc();
     
+    @Query("SELECT f FROM FinancialLedger f WHERE YEAR(f.transactionDate) = :year AND MONTH(f.transactionDate) = :month ORDER BY f.transactionDate DESC")
+    List<FinancialLedger> findByYearAndMonth(@Param("year") int year, @Param("month") int month);
+    
 }
