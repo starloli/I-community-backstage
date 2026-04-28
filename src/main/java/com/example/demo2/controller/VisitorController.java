@@ -123,7 +123,7 @@ public class VisitorController {
 	@GetMapping("/allAddresses")
 	public List<String> getAllUniqueAddresses() {
 		// 使用 JPQL 的 DISTINCT 關鍵字，讓資料庫直接幫你完成去重，效率最高
-		return userDao.findDistinctUnitNumbers();
+		return userDao.findDistinctResidentUnitNumbers();
 	}
 
 	// 住戶刪除訪客
