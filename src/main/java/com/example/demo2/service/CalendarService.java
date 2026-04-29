@@ -14,7 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo2.dto.request.CalendarRequest;
 import com.example.demo2.dto.response.CalendarResponse;
 import com.example.demo2.entity.Calendar;
+import com.example.demo2.entity.Reservation;
+import com.example.demo2.entity.User;
+import com.example.demo2.enums.ReservationStatus;
+import com.example.demo2.exception.NotFoundException;
 import com.example.demo2.repository.CalendarDao;
+import com.example.demo2.repository.ReservationDao;
+import com.example.demo2.repository.UserDao;
 
 import lombok.RequiredArgsConstructor;
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -29,6 +35,8 @@ import net.fortuna.ical4j.model.property.DtStart;
 public class CalendarService {
 
     private final CalendarDao calendarDao;
+    private final ReservationDao reservationDao;
+    private final UserDao userDao;
     private static final String ICS_URL =
         "https://calendar.google.com/calendar/ical/zh.taiwan%23holiday%40group.v.calendar.google.com/public/basic.ics";
 
@@ -90,5 +98,26 @@ public class CalendarService {
         c.setTitle(request.getTitle());
         calendarDao.save(c);
         return CalendarResponse.from(c);
+    }
+
+    public List<CalendarResponse> getReservations(String start, String name) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = YearMonth.from(startDate).atEndOfMonth();
+        User user = userDao.findByUserName(name)
+                .orElseThrow(() -> new NotFoundException("找不到使用者"));
+        List<Reservation> lists = reservationDao.findByUserUserIdAndStatusAndDateBetween(
+            user.getUserId(),
+            ReservationStatus.CONFIRMED,
+            startDate,
+            endDate
+        );
+        return lists.stream()
+                .map(r -> 
+                    new CalendarResponse(
+                        null,
+                        r.getDate().toString(),
+                        r.getFacility().getName() + ": " + r.getStartTime() + "-" + r.getEndTime())
+                ).toList();
+                
     }
 }
