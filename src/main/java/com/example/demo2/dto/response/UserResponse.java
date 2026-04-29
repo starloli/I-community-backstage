@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.example.demo2.entity.User;
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 
 
 public record UserResponse(
@@ -17,7 +18,7 @@ public record UserResponse(
     BigDecimal squareFootage,
     Integer carParkingSpace,
     Integer motorParkingSpace,
-    boolean is_active
+    UserStatus status
 ) {
     public static UserResponse from(User user) {
     	return new UserResponse(
@@ -31,7 +32,7 @@ public record UserResponse(
                 user.getSquareFootage(),
                 user.getCarParkingSpace(),
                 user.getMotorParkingSpace(),
-                user.getIs_active()
+                user.getStatus()
         );
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.example.demo2.enums.UserRole;
+import com.example.demo2.enums.UserStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,7 +49,7 @@ public class User {
     private UserRole role;
 
     @Column(nullable = false)
-    private Boolean is_active;
+    private UserStatus status;
 
     private LocalDateTime created_at;
 
@@ -75,7 +76,7 @@ public class User {
         this.phone = phone;
         this.unitNumber = unitNumber;
         this.role = UserRole.RESIDENT;
-        this.is_active = true;
+        this.status = UserStatus.PENDING;
         this.created_at = LocalDateTime.now();
     }
 }
