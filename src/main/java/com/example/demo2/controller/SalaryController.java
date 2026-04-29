@@ -135,6 +135,18 @@ public class SalaryController {
     	    salaryService.paySalary(recordId, creator, request.getBonus(), request.getDeduction());
         return "薪資發放成功，已計入財務總帳";
     }
+    
+    //得到全部部門
+    @GetMapping("/getDepartment")
+    public List<Department> getDepartments(){
+    	return departmentDao.findAll();
+    }
+    
+    
+    
+    
+    
+    
 //    得到特定月份的盈餘
     @GetMapping("/summary/{year}/{month}")
     public FinancialSummaryRequest getMonthly(@PathVariable("year") int year, @PathVariable("month") int month) {
