@@ -31,4 +31,17 @@ public interface FinancialLedgerDao extends JpaRepository<FinancialLedger,Long> 
     @Query("SELECT f FROM FinancialLedger f WHERE YEAR(f.transactionDate) = :year AND MONTH(f.transactionDate) = :month ORDER BY f.transactionDate DESC")
     List<FinancialLedger> findByYearAndMonth(@Param("year") int year, @Param("month") int month);
     
+    
+    
+    //查找每個月的收入和支出
+    @Query("SELECT YEAR(f.transactionDate) as year, " +
+    	       "MONTH(f.transactionDate) as month, " +
+    	       "f.type as type, " +
+    	       "f.category as category, " +
+    	       "SUM(f.amount) as totalAmount " +
+    	       "FROM FinancialLedger f " +
+    	       "GROUP BY YEAR(f.transactionDate), MONTH(f.transactionDate), f.type, f.category " +
+    	       "ORDER BY YEAR(f.transactionDate) DESC, MONTH(f.transactionDate) DESC")
+    	List<CategorySummaryProjection> findDetailedMonthlyStats();
+    
 }
