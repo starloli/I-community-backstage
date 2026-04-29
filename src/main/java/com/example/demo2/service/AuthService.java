@@ -76,10 +76,19 @@ public class AuthService {
             throw new RuntimeException("非管理員帳號");
         }
 
-        String accessToken = jwtTokenProvider.createToken(
-                user.getUserName(), user.getRole());
-
-        return new LoginResponse(accessToken);
+        switch (user.getStatus()) {
+            case PENDING:
+                throw new AccountStatusException(ErrorCode.ACCOUNT_PENDING, "帳號尚未啟用");
+            case INACTIVE:
+                throw new AccountStatusException(ErrorCode.ACCOUNT_INACTIVE, "帳號已被停用");
+            case ACTIVE:
+                String accessToken = jwtTokenProvider.createToken(
+                        user.getUserName(), user.getRole());
+                LoginResponse login = new LoginResponse(accessToken);
+                return login;
+            default:
+                throw new RuntimeException("未知帳號狀態");
+        }
     }
 
     @Transactional
@@ -166,7 +175,38 @@ public class AuthService {
         return true;
     }
 
-    // TODO: 【Phase 2】超級管理員密碼驗證和信箱驗證相關方法
+    @Transactional
+    public boolean verifyPassword(User user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPasswordHash());
+    }
+
+    @Transactional
+    public void generatePasswordChangeVerifyCode(String email) {
+        SecureRandom random = new SecureRandom();
+        String code = String.format("%06d", random.nextInt(1000000));
+
+        EmailVerifyCode evc = new EmailVerifyCode();
+        evc.setEmail(email);
+        evc.setCode(code);
+        evc.setExpiryDate(LocalDateTime.now().plusMinutes(15));
+        evc.setUsed(false);
+        codeDao.save(evc);
+        emailService.sendSimpleEmail(email, "超級管理員變更認證碼", "六位認證碼: " + code);
+    }
+
+    @Transactional
+    public boolean verifyPasswordChangeCode(EmailVerifyRequest r) {
+        List<EmailVerifyCode> evcs = codeDao.findByEmailAndCodeAndUsed(r.email(), r.code(), false);
+        for (EmailVerifyCode evc : evcs) {
+            if (evc.getExpiryDate().isAfter(LocalDateTime.now())) {
+                evc.setUsed(true);
+                return true;
+            }
+        }
+        throw new RuntimeException("認證碼錯誤");
+    }
+
+    // TODO: 【Phase 2】(已完成)超級管理員密碼驗證和信箱驗證相關方法
     // 1. verifyOldPassword(User user, String rawPassword): boolean
     // - 驗證超級管理員舊密碼，進入編輯頁面前使用
     // - 使用 BCryptPasswordEncoder 對比密碼

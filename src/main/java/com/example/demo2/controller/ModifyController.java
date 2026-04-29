@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo2.dto.request.ModifyResidentRequset;
 import com.example.demo2.dto.request.ResidentMyselfModifyRequest;
 import com.example.demo2.dto.request.SuperAdminSelfRequest;
+import com.example.demo2.dto.request.VerifyPasswordRequest;
 import com.example.demo2.dto.response.ModifyResidentResponse;
 import com.example.demo2.dto.response.UserResponse;
 import com.example.demo2.entity.User;
 import com.example.demo2.repository.UserDao;
+import com.example.demo2.service.AuthService;
 import com.example.demo2.service.ModifyResidentService;
 
 import jakarta.validation.Valid;
@@ -40,15 +43,14 @@ public class ModifyController {
   @Autowired
   private UserDao userDao;
 
-  // TODO: 【Phase 3】新增 AuthService 和 PasswordEncoder 注入
-  // @Autowired
-  // private AuthService authService;
-  //
-  // @Autowired
-  // private PasswordEncoder passwordEncoder;
+  @Autowired
+  private AuthService authService;
+
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @PostMapping("/superadmin/send-change-verify-code")
-  public ResponseEntity<?> superadminSendChangeVerifyCode() {
+  public ResponseEntity<?> superadminSendChangeVerifyCode(@RequestBody String email) {
     // TODO: 【Phase 3】發送驗證碼到舊信箱（確認修改前）
     // 功能：在點擊「儲存變更」時，發送驗證碼到現有信箱
     //
@@ -56,6 +58,8 @@ public class ModifyController {
     // 1. 從 JWT token 獲取當前用戶信息
     // 2. 調用 authService.generatePasswordChangeVerifyCode(currentUser.getEmail())
     // 3. 返回成功訊息和驗證碼有效期 (900 秒)
+    authService.generatePasswordChangeVerifyCode(email);
+
     //
     // 異常處理：
     // - 信箱不存在
@@ -64,7 +68,7 @@ public class ModifyController {
   }
 
   @PostMapping("/superadmin/verify-password")
-  public ResponseEntity<?> superadminVerifyPassword() {
+  public ResponseEntity<?> superadminVerifyPassword(@RequestBody VerifyPasswordRequest request) {
     // TODO: 【Phase 3】驗證超級管理員舊密碼（進入編輯頁面前）
     // 功能：進入 user-info 頁面前，先驗證舊密碼
     //
@@ -78,7 +82,17 @@ public class ModifyController {
     // 異常處理：
     // - 無法辨識登入者
     // - 密碼驗證失敗
-    return ResponseEntity.ok(Map.of("message", "驗證成功"));
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    User currentUser = userDao.findByUserName(authentication.getName())
+        .orElseThrow(() -> new RuntimeException("無法辨識目前登入者"));
+
+    if (authService.verifyPassword(currentUser, request.password())) {
+      return ResponseEntity.ok(Map.of("message", "驗證成功", "valid", true));
+    } else {
+      return ResponseEntity.badRequest().body(Map.of("message", "密碼不正確"));
+    }
   }
 
   @PutMapping("/superadmin/self")
@@ -88,17 +102,19 @@ public class ModifyController {
     //
     // 步驟：
     // 1. 從 JWT token 獲取當前用戶
-    // 2. 調用 authService.verifyPasswordChangeCode(currentUser.getEmail(), user.verifyCode())
+    // 2. 調用 authService.verifyPasswordChangeCode(currentUser.getEmail(),
+    // user.verifyCode())
     // 3. 若驗證碼無效或過期，返回 400 { message: "驗證碼無效或已過期" }
     // 4. 若驗證通過，更新用戶資料：
-    //    - fullName, email, phone
-    //    - password（使用 passwordEncoder.encode()）
+    // - fullName, email, phone
+    // - password（使用 passwordEncoder.encode()）
     // 5. 調用 userDao.save(currentUser)
     // 6. 返回成功訊息 { message: "資料已成功更新" }
     //
     // 異常處理：
     // - 驗證碼驗證失敗
     // - 資料更新失敗
+
     return ResponseEntity.ok(Map.of("message", "超級管理員變更成功"));
   }
 
