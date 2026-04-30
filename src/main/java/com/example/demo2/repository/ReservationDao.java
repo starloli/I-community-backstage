@@ -19,6 +19,13 @@ public interface ReservationDao extends JpaRepository<Reservation, Integer> {
 
     List<Reservation> findByFacility_FacilityIdAndUser_UserId(Integer facilityId, Integer userId);
 
+    List<Reservation> findByUserUserIdAndStatusAndDateBetween(
+        Integer userId,
+        ReservationStatus status,
+        LocalDate start,
+        LocalDate end
+    );
+
     void deleteByFacility_FacilityId(Integer facilityId);
 
     // 根據時段，取得設備預約人數，不計算已取消的預約

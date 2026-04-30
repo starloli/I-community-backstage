@@ -3,6 +3,7 @@ package com.example.demo2.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,15 @@ public class CalendarController {
         @RequestParam("start") String start
     ) {
         return service.getEvents(start);
+    }
+
+    @GetMapping("/reservation")
+    public List<CalendarResponse> getReservations(
+        @RequestParam("start") String start,
+        Authentication authentication
+    ) {
+        String name = authentication.getName();
+        return service.getReservations(start, name);
     }
 
     @PostMapping
