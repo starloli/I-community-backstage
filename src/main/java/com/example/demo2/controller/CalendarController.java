@@ -52,6 +52,15 @@ public class CalendarController {
         return service.getReservations(start, name);
     }
 
+    @GetMapping("/bill")
+    public List<CalendarResponse> getBills(
+        @RequestParam("start") String start,
+        Authentication authentication
+    ) {
+        String name = authentication.getName();
+        return service.getBills(start, name);
+    }
+
     @PostMapping
     public CalendarResponse postEvent(
         @RequestBody CalendarRequest r

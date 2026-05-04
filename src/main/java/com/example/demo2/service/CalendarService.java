@@ -13,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo2.dto.request.CalendarRequest;
 import com.example.demo2.dto.response.CalendarResponse;
+import com.example.demo2.entity.Bill;
 import com.example.demo2.entity.Calendar;
 import com.example.demo2.entity.Reservation;
 import com.example.demo2.entity.User;
+import com.example.demo2.enums.BillStatus;
 import com.example.demo2.enums.ReservationStatus;
 import com.example.demo2.exception.NotFoundException;
+import com.example.demo2.repository.BillDao;
 import com.example.demo2.repository.CalendarDao;
 import com.example.demo2.repository.ReservationDao;
 import com.example.demo2.repository.UserDao;
@@ -37,6 +40,7 @@ public class CalendarService {
     private final CalendarDao calendarDao;
     private final ReservationDao reservationDao;
     private final UserDao userDao;
+    private final BillDao billDao;
     private static final String ICS_URL =
         "https://calendar.google.com/calendar/ical/zh.taiwan%23holiday%40group.v.calendar.google.com/public/basic.ics";
 
@@ -112,12 +116,29 @@ public class CalendarService {
             endDate
         );
         return lists.stream()
-                .map(r -> 
-                    new CalendarResponse(
-                        null,
+                .map(r -> new CalendarResponse(
+                        r.getReservationId(),
                         r.getDate().toString(),
-                        r.getFacility().getName() + ": " + r.getStartTime() + "-" + r.getEndTime())
-                ).toList();
-                
+                        r.getFacility().getName() + ": " + r.getStartTime() + "-" + r.getEndTime()
+                )).toList();
+    }
+
+    public List<CalendarResponse> getBills(String start, String name) {
+        LocalDate startDate = LocalDate.parse(start);
+        LocalDate endDate = YearMonth.from(startDate).atEndOfMonth();
+        User user = userDao.findByUserName(name)
+                .orElseThrow(() -> new NotFoundException("找不到使用者"));
+        List<Bill> lists = billDao.findByUnitNumberAndStatusAndDueDateBetween(
+                user.getUnitNumber(),
+                BillStatus.UNPAID,
+                startDate,
+                endDate
+        );
+        return lists.stream()
+                .map(b -> new CalendarResponse(
+                        b.getBillId(),
+                        b.getDueDate().toString(),
+                        b.getBillType().getDisplayName() + b.getAmount().intValue() + "元繳交截止日"
+                )).toList();
     }
 }
